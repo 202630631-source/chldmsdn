@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍽️ 오늘 저녁 뭐 먹지?</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px 10px;
+        }
+
+        .container {
+            background: white;
+            width: 100%;
+            max-width: 520px;
+            padding: 30px 20px;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 6px;
+            color: #ff6b6b;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            text-align: left;
+            margin-bottom: 10px;
+            color: #495057;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .option-group {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .option-group.col-2 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .btn-option {
+            background: #f1f3f5;
+            border: 2px solid transparent;
+            padding: 12px 4px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #495057;
+            white-space: nowrap;
+        }
+
+        .btn-option:hover {
+            background: #e9ecef;
+        }
+
+        .btn-option.selected {
+            background: #fff5f5;
+            border-color: #ff6b6b;
+            color: #ff6b6b;
+        }
+
+        .btn-submit {
+            width: 100%;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 14px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+            transition: transform 0.1s ease, background-color 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover {
+            background: #fa5252;
+        }
+
+        .btn-submit:active {
+            transform: scale(0.98);
+        }
+
+        /* 결과 화면 */
+        .result-box {
+            display: none;
+            margin-top: 25px;
+            padding: 25px 20px;
+            background: #fff9db;
+            border-radius: 18px;
+            border: 2px dashed #ffe066;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .result-box h2 {
+            font-size: 1rem;
+            color: #f08c00;
+            margin-bottom: 8px;
+        }
+
+        .result-box .menu-name {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #212529;
+            margin: 10px 0 4px;
+            word-break: keep-all;
+        }
+
+        .result-box .menu-price {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #e67e22;
+            margin-bottom: 18px;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .btn-secondary {
+            background: white;
+            border: 1px solid #ced4da;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: #495057;
+            transition: background 0.2s;
+        }
+
+        .btn-secondary:hover {
+            background: #f8f9fa;
+        }
+
+        /* 리스트 영역 */
+        .menu-list-container {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e9ecef;
+            text-align: left;
+            max-height: 280px;
+            overflow-y: auto;
+        }
+
+        .menu-list-container h3 {
+            font-size: 0.95rem;
+            color: #343a40;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #ff6b6b;
+            padding-bottom: 5px;
+        }
+
+        .category-header {
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #495057;
+            margin: 12px 0 6px 0;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .menu-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .tag {
+            background: #f1f3f5;
+            color: #495057;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+        }
+
+        .tag .price {
+            color: #ff6b6b;
+            font-weight: bold;
+            margin-left: 3px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>🍽️ 오늘 저녁 뭐 먹지?</h1>
+        <p class="subtitle">조건과 예산에 딱 맞는 저녁 메뉴를 추천받으세요!</p>
+
+        <!-- 1. 음식 종류 -->
+        <div class="section-title">🍱 1. 음식 종류</div>
+        <div class="option-group" id="categoryGroup">
+            <button class="btn-option selected" data-value="한식">한식</button>
+            <button class="btn-option" data-value="양식">양식</button>
+            <button class="btn-option" data-value="중식">중식</button>
+            <button class="btn-option" data-value="일식">일식</button>
+        </div>
+
+        <!-- 2. 맵기 -->
+        <div class="section-title">🌶️ 2. 맵기 취향</div>
+        <div class="option-group col-2" id="spicyGroup">
+            <button class="btn-option selected" data-value="매운거">🌶️ 매운 거</button>
+            <button class="btn-option" data-value="안매운거">🍱 안 매운 거</button>
+        </div>
+
+        <!-- 3. 주재료 -->
+        <div class="section-title">🌾 3. 탄수화물/주재료</div>
+        <div class="option-group" id="stapleGroup">
+            <button class="btn-option selected" data-value="밥">🍚 밥</button>
+            <button class="btn-option" data-value="면">🍜 면</button>
+            <button class="btn-option" data-value="빵">🍞 빵</button>
+            <button class="btn-option" data-value="떡">🍡 떡</button>
+        </div>
+
+        <!-- 4. 온도 -->
+        <div class="section-title">🌡️ 4. 음식 온도</div>
+        <div class="option-group col-2" id="tempGroup">
+            <button class="btn-option selected" data-value="뜨거운거">♨️ 뜨거운 거</button>
+            <button class="btn-option" data-value="차가운거">🧊 차가운 거</button>
+        </div>
+
+        <!-- 5. 가격대 -->
+        <div class="section-title">💰 5. 가격대 (1인/기준)</div>
+        <div class="option-group" id="priceGroup">
+            <button class="btn-option selected" data-value="1만원 이하">1만원 이하</button>
+            <button class="btn-option" data-value="1만원대">1만원대</button>
+            <button class="btn-option" data-value="2만원대">2만원대</button>
+            <button class="btn-option" data-value="3만원 이상">3만원 이상</button>
+        </div>
+
+        <!-- 추천 버튼 -->
+        <button class="btn-submit" onclick="recommendMenu()">🎯 메뉴 추천받기!</button>
+
+        <!-- 결과 카드 -->
+        <div class="result-box" id="resultBox">
+            <h2>오늘 저녁 추천 메뉴</h2>
+            <div class="menu-name" id="menuName">-</div>
+            <div class="menu-price" id="menuPrice">-</div>
+
+            <div class="btn-group">
+                <button class="btn-secondary" onclick="recommendMenu()">🔄 다시 추천받기</button>
+                <button class="btn-secondary" onclick="toggleConditionList()">📋 선택 조건에 맞는 전체 메뉴 보기</button>
+                <button class="btn-secondary" onclick="toggleAllList()">📖 등록된 전체 메뉴 (카테고리별 세분화)</button>
+            </div>
+
+            <!-- 조건별 메뉴 목록 -->
+            <div class="menu-list-container" id="conditionListContainer">
+                <h3 id="conditionTitle">선택 조건에 맞는 메뉴 목록</h3>
+                <div class="menu-tags" id="conditionTags"></div>
+            </div>
+
+            <!-- 전체 메뉴 목록 (카테고리별 분리) -->
+            <div class="menu-list-container" id="allListContainer">
+                <h3>사이트 전체 메뉴 목록 (120종)</h3>
+                <div id="allCategoryBox"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 최신 외식 물가 평균 시세를 반영한 120개 메뉴 데이터
+        const menuData = [
+            // --- 한식 (30개) ---
+            { name: '김치찌개', category: '한식', spicy: '매운거', staple: '밥', temp: '뜨거운거', priceGroup: '1만원 이하', price: 9000 },
+            { name: '제육덮밥', category: '한식', spicy: '매운거', staple: '밥', temp: '뜨거운거', priceGroup: '1만원 이하', price: 9500 },
+            { name: '순두부찌개', category: '한식', spicy: '매운거', staple: '밥', temp: '뜨거운거', priceGroup: '1만원 이하', price: 9000 },
+            { name: '오징어볶음', category: '한식', spicy: '매운거', staple: '밥', temp: '뜨거운거', priceGroup: '1만원대', price: 12000 },
+            { name: '닭볶음탕', category: '한식', spicy: '매운거', staple: '밥', temp: '뜨거운거', priceGroup: '3만원 이상', price: 32000 },
+            { name: '낙지볶음', category: '한식', spicy: '매운거', staple: '밥', temp: '뜨거운거', priceGroup: '2만원대', price: 24000 },
+            { name: '부대찌개', category: '한식', spicy: '매운거', staple: '밥', temp: '뜨거운거', priceGroup: '2만원대', price: 22000 },
+            { name: '매운 갈비찜', category: '한식', spicy: '매운거', staple: '밥', temp: '뜨거운거', priceGroup: '3만원 이상', price: 38000 },
+            { name: '육회비빔밥', category: '한식', spicy: '매운거', staple: '밥', temp: '차가운거', priceGroup: '1만원대', price: 13000 },
+            { name: '콩나물국밥', category: '한식', spicy: '안매운거', staple: '밥', temp: '뜨거운거', priceGroup: '1만원 이하', price: 8000 },
+            { name: '된장찌개', category: '한식', spicy: '안매운거', staple: '밥', temp: '뜨거운거', priceGroup: '1만원 이하', price: 8500 },
+            { name: '갈비탕', category: '한식', spicy: '안매운거', staple: '밥', temp: '뜨거운거', priceGroup: '1만원대', price: 15000 },
+            { name: '삼계탕', category: '한식', spicy: '안매운거', staple: '밥', temp: '뜨거운거', priceGroup: '1만원대', price: 17000 },
+            { name: '소불고기덮밥', category: '한식', spicy: '안매운거', staple: '밥', temp: '뜨거운거', priceGroup: '1만원대', price: 11000 },
+            { name: '회덮밥', category: '한식', spicy: '안매운거', staple: '밥', temp: '차가운거', priceGroup: '1만원대', price: 12500 },
+            { name: '짬뽕순두부국수', category: '한식', spicy: '매운거', staple: '면', temp: '뜨거운거', priceGroup: '1만원대', price: 11000 },
+            { name: '장칼국수', category: '한식', spicy: '매운거', staple: '면', temp: '뜨거운거', priceGroup: '1만원 이하', price: 9000 },
+            { name: '비빔냉면', category: '한식', spicy: '매운거', staple: '면', temp: '차가운거', priceGroup: '1만원대', price: 10500 },
+            { name: '쫄면', category: '한식', spicy: '매운거', staple: '면', temp: '차가운거', priceGroup: '1만원 이하', price: 8000 },
+            { name: '잔치국수', category: '한식', spicy: '안매운거', staple: '면', temp: '뜨거운거', priceGroup: '1만원 이하', price: 7500 },
+            { name: '바지락칼국수', category: '한식', spicy: '안매운거', staple: '면', temp: '뜨거운거', priceGroup: '1만원 이하', price: 9500 },
+            { name: '물냉면', category: '한식', spicy: '안매운거', staple: '면', temp: '차가운거', priceGroup: '1만원대', price: 10500 },
+            { name: '콩국수', category: '한식', spicy: '안매운거', staple: '면', temp: '차가운거', priceGroup: '1만원대', price: 11000 },
+            { name: '매콤 제육 샌드위치', category: '한식', spicy: '매운거', staple: '빵', temp: '뜨거운거', priceGroup: '1만원 이하', price: 7500 },
+            { name: '길거리 토스트', category: '한식', spicy: '안매운거', staple: '빵', temp: '뜨거운거', priceGroup: '1만원 이하', price: 4500 },
+            { name: '계란 샐러드빵', category: '한식', spicy: '안매운거', staple: '빵', temp: '차가운거', priceGroup: '1만원 이하', price: 5000 },
+            { name: '빨간 떡볶이', category: '한식', spicy: '매운거', staple: '떡', temp: '뜨거운거', priceGroup: '1만원 이하', price: 6000 },
+            { name: '매운 떡꼬치', category: '한식', spicy: '매운거', staple: '떡', temp: '뜨거운거', priceGroup: '1만원 이하', price: 4000 },
+            { name: '궁중떡볶이', category: '한식', spicy: '안매운거', staple: '떡', temp: '뜨거운거', priceGroup: '1만원대', price: 14000 },
+            { name: '사골 떡국', category: '한식', spicy: '안매운거', staple: '떡', temp: '뜨거운거', priceGroup: '1만원 이하', price: 9500 },
+
+            // --- 양식 (30개) ---
+            { name: '스파이시 리조또', category: '양식', spicy: '매운거', staple: '밥', temp: '뜨거운거', priceGroup: '1만원대', price: 16000 },
+            { name: '해산물 잠발라야', category: '양식', spicy: '매운거', staple: '밥', temp: '뜨거운거', priceGroup: '1만원대', price: 18000 },
+            { name: '스파이시 포케', category: '양식', spicy: '매운거', staple: '밥', temp: '차가운거', priceGroup: '1만원대', price: 13500 },
+            { name: '버섯 크림 리조또', category: '양식', spicy: '안매운거', staple: '밥', temp: '뜨거운거', priceGroup: '1만원대', price: 16500 },
+            { name: '스페인식 해산물 파에야', category: '양식', spicy: '안매운거', staple: '밥', temp: '뜨거운거', priceGroup: '3만원 이상', price: 34000 },
+            { name: '바비큐 폭립과 볶음밥', category: '양식', spicy: '안매운거', staple: '밥', temp: '뜨거운거', priceGroup: '3만원 이상', price: 38000 },
+            { name: '연어 포케', category: '양식', spicy: '안매운거', staple: '밥', temp: '차가운거', priceGroup: '1만원대', price: 14000 },
+            { name: '아라비아따 파스타', category: '양식', spicy: '매운거', staple: '면', temp: '뜨거운거', priceGroup: '1만원대', price: 15000 },
+            { name: '투움바 파스타', category: '양식', spicy: '매운거', staple: '면', temp: '뜨거운거', priceGroup: '1만원대', price: 17000 },
+            { name: '매콤 해산물 파스타', category: '양식', spicy: '매운거', staple: '면', temp: '뜨거운거', priceGroup: '2만원대', price: 21000 },
+            { name: '매콤 샐러드 파스타', category: '양식', spicy: '매운거', staple: '면', temp: '차가운거', priceGroup: '1만원대', price: 14000 },
+            { name: '까르보나라', category: '양식', spicy: '안매운거', staple: '면', temp: '뜨거운거', priceGroup: '1만원대', price: 15500 },
+            { name: '봉골레 파스타', category: '양식', spicy: '안매운거', staple: '면', temp: '뜨거운거', priceGroup: '1만원대', price: 16000 },
+            { name: '알리오 올리오', category: '양식', spicy: '안매운거', staple: '면', temp: '뜨거운거', priceGroup: '1만원대', price: 14000 },
+            { name: '라자냐', category: '양식', spicy: '안매운거', staple: '면', temp: '뜨거운거', priceGroup: '2만원대', price: 22000 },
+            { name: '해산물 토마토 파스타', category: '양식', spicy: '안매운거', staple: '면', temp: '뜨거운거', priceGroup: '1만원대', price: 18000 },
+            { name: '바질 페스토 파스타', category: '양식', spicy: '안매운거', staple: '면', temp: '뜨거운거', priceGroup: '1만원대', price: 16500 },
+            { name: '오리엔탈 샐러드 파스타', category: '양식', spicy: '안매운거', staple: '면', temp: '차가운거', priceGroup: '1만원대', price: 13500 },
+            { name: '디아볼라 피자', category: '양식', spicy: '매운거', staple: '빵', temp: '뜨거운거', priceGroup: '2만원대', price: 23000 },
+            { name: '핫치킨 버거', category: '양식', spicy: '매운거', staple: '빵', temp: '뜨거운거', priceGroup: '1만원 이하', price: 8500 },
+            { name: '칠리 핫도그', category: '양식', spicy: '매운거', staple: '빵', temp: '뜨거운거', priceGroup: '1만원 이하', price: 7500 },
+            { name: '고르곤졸라 피자', category: '양식', spicy: '안매운거', staple: '빵', temp: '뜨거운거', priceGroup: '2만원대', price: 21000 },
+            { name: '수제 치즈버거', category: '양식', spicy: '안매운거', staple: '빵', temp: '뜨거운거', priceGroup: '1만원 이하', price: 9500 },
+            { name: '페퍼로니 피자', category: '양식', spicy: '안매운거', staple: '빵', temp: '뜨거운거', priceGroup: '2만원대', price: 22000 },
+            { name: '에그 베네딕트', category: '양식', spicy: '안매운거', staple: '빵', temp: '뜨거운거', priceGroup: '1만원대', price: 16000 },
+            { name: '감바스 알 아히요와 바게트', category: '양식', spicy: '안매운거', staple: '빵', temp: '뜨거운거', priceGroup: '2만원대', price: 24000 },
+            { name: '클럽 샌드위치', category: '양식', spicy: '안매운거', staple: '빵', temp: '차가운거', priceGroup: '1만원 이하', price: 9000 },
+            { name: 'BLT 샌드위치', category: '양식', spicy: '안매운거', staple: '빵', temp: '차가운거', priceGroup: '1만원 이하', price: 8500 },
+            { name: '투움바 뇨끼', category: '양식', spicy: '매운거', staple: '떡', temp: '뜨거운거', priceGroup: '1만원대', price: 19000 },
+            { name: '트러플 크림 뇨끼', category: '양식', spicy: '안매운거', staple: '떡', temp: '뜨거운거', priceGroup: '2만원대', price: 21000 },
+
+            // --- 중식 (30개) ---
+            { name: '마파두부밥', category: '중식', spicy: '매운거', staple: '밥', temp: '뜨거운거', priceGroup: '1만원 이하', price: 9500 },
+            { name: '짬뽕밥', category: '중식', spicy: '매운거', staple: '밥', temp: '뜨거운거', priceGroup: '1만원 이하', price: 9500 },
+            { name: '고추잡채밥', category: '중식', spicy: '매운거', staple: '밥', temp: '뜨거운거', priceGroup: '1만원대', price: 11000 },
+            { name: '중화 비빔밥', category: '중식', spicy: '매운거', staple: '밥', temp: '뜨거운거', priceGroup: '1만원대', price: 10500 },
+            { name: '깐풍기덮밥', category: '중식', spicy: '매운거', staple: '밥', temp: '뜨거운거', priceGroup: '1만원대', price: 12000 },
+            { name: '마라샹궈', category: '중식', spicy: '매운거', staple: '밥', temp: '뜨거운거', priceGroup: '2만원대', price: 26000 },
+            { name: '사천 탕수육덮밥', category: '중식', spicy: '매운거', staple: '밥', temp: '뜨거운거', priceGroup: '1만원대', price: 12000 },
+            { name: '계란 볶음밥', category: '중식', spicy: '안매운거', staple: '밥', temp: '뜨거운거', priceGroup: '1만원 이하', price: 8500 },
+            { name: '유산슬덮밥', category: '중식', spicy: '안매운거', staple: '밥', temp: '뜨거운거', priceGroup: '1만원대', price: 14000 },
+            { name: '잡채밥', category: '중식', spicy: '안매운거', staple: '밥', temp: '뜨거운거', priceGroup: '1만원 이하', price: 9500 },
+            { name: '탕수육덮밥', category: '중식', spicy: '안매운거', staple: '밥', temp: '뜨거운거', priceGroup: '1만원대', price: 11000 },
+            { name: '동파육덮밥', category: '중식', spicy: '안매운거', staple: '밥', temp: '뜨거운거', priceGroup: '3만원 이상', price: 35000 },
+            { name: '얼큰 짬뽕', category: '중식', spicy: '매운거', staple: '면', temp: '뜨거운거', priceGroup: '1만원 이하', price: 9000 },
+            { name: '마라탕', category: '중식', spicy: '매운거', staple: '면', temp: '뜨거운거', priceGroup: '1만원대', price: 13000 },
+            { name: '탄탄멘', category: '중식', spicy: '매운거', staple: '면', temp: '뜨거운거', priceGroup: '1만원대', price: 11000 },
+            { name: '사천짜장', category: '중식', spicy: '매운거', staple: '면', temp: '뜨거운거', priceGroup: '1만원 이하', price: 9000 },
+            { name: '마라 비빔면', category: '중식', spicy: '매운거', staple: '면', temp: '차가운거', priceGroup: '1만원대', price: 11500 },
+            { name: '짜장면', category: '중식', spicy: '안매운거', staple: '면', temp: '뜨거운거', priceGroup: '1만원 이하', price: 7500 },
+            { name: '쟁반짜장', category: '중식', spicy: '안매운거', staple: '면', temp: '뜨거운거', priceGroup: '1만원대', price: 18000 },
+            { name: '우육면', category: '중식', spicy: '안매운거', staple: '면', temp: '뜨거운거', priceGroup: '1만원대', price: 12500 },
+            { name: '중국냉면', category: '중식', spicy: '안매운거', staple: '면', temp: '차가운거', priceGroup: '1만원대', price: 11000 },
+            { name: '고추잡채 & 꽃빵', category: '중식', spicy: '매운거', staple: '빵', temp: '뜨거운거', priceGroup: '2만원대', price: 25000 },
+            { name: '매운 마라 만두', category: '중식', spicy: '매운거', staple: '빵', temp: '뜨거운거', priceGroup: '1만원 이하', price: 8000 },
+            { name: '멘보샤', category: '중식', spicy: '안매운거', staple: '빵', temp: '뜨거운거', priceGroup: '2만원대', price: 22000 },
+            { name: '연유 꽃빵 튀김', category: '중식', spicy: '안매운거', staple: '빵', temp: '뜨거운거', priceGroup: '1만원 이하', price: 7000 },
+            { name: '바오번 (동파육 샌드위치)', category: '중식', spicy: '안매운거', staple: '빵', temp: '뜨거운거', priceGroup: '1만원대', price: 12000 },
+            { name: '딤섬 모둠', category: '중식', spicy: '안매운거', staple: '빵', temp: '뜨거운거', priceGroup: '1만원대', price: 16000 },
+            { name: '바삭 군만두', category: '중식', spicy: '안매운거', staple: '빵', temp: '뜨거운거', priceGroup: '1만원 이하', price: 7000 },
+            { name: '마라 분모자 볶음', category: '중식', spicy: '매운거', staple: '떡', temp: '뜨거운거', priceGroup: '1만원대', price: 18000 },
+            { name: '로제 분모자 떡볶이', category: '중식', spicy: '안매운거', staple: '떡', temp: '뜨거운거', priceGroup: '1만원대', price: 17000 },
+
+            // --- 일식 (30개) ---
+            { name: '매운 카레덮밥', category: '일식', spicy: '매운거', staple: '밥', temp: '뜨거운거', priceGroup: '1만원 이하', price: 9500 },
+            { name: '스파이시 연어동', category: '일식', spicy: '매운거', staple: '밥', temp: '차가운거', priceGroup: '1만원대', price: 15500 },
+            { name: '규동 (소고기덮밥)', category: '일식', spicy: '안매운거', staple: '밥', temp: '뜨거운거', priceGroup: '1만원 이하', price: 9500 },
+            { name: '가츠동 (돈까스덮밥)', category: '일식', spicy: '안매운거', staple: '밥', temp: '뜨거운거', priceGroup: '1만원대', price: 10500 },
+            { name: '오야코동 (닭고기계란덮밥)', category: '일식', spicy: '안매운거', staple: '밥', temp: '뜨거운거', priceGroup: '1만원 이하', price: 9500 },
+            { name: '장어덮밥 (우나기동)', category: '일식', spicy: '안매운거', staple: '밥', temp: '뜨거운거', priceGroup: '3만원 이상', price: 36000 },
+            { name: '텐동 (튀김덮밥)', category: '일식', spicy: '안매운거', staple: '밥', temp: '뜨거운거', priceGroup: '1만원대', price: 14000 },
+            { name: '모듬 초밥', category: '일식', spicy: '안매운거', staple: '밥', temp: '차가운거', priceGroup: '1만원대', price: 18000 },
+            { name: '사케동 (연어덮밥)', category: '일식', spicy: '안매운거', staple: '밥', temp: '차가운거', priceGroup: '1만원대', price: 15000 },
+            { name: '매운 카라미소 라멘', category: '일식', spicy: '매운거', staple: '면', temp: '뜨거운거', priceGroup: '1만원대', price: 11000 },
+            { name: '매운 야키소바', category: '일식', spicy: '매운거', staple: '면', temp: '뜨거운거', priceGroup: '1만원대', price: 12000 },
+            { name: '매운 카레 우동', category: '일식', spicy: '매운거', staple: '면', temp: '뜨거운거', priceGroup: '1만원대', price: 10500 },
+            { name: '매콤 냉라면 (히야시)', category: '일식', spicy: '매운거', staple: '면', temp: '차가운거', priceGroup: '1만원대', price: 10000 },
+            { name: '돈코츠 라멘', category: '일식', spicy: '안매운거', staple: '면', temp: '뜨거운거', priceGroup: '1만원대', price: 10500 },
+            { name: '가쓰오 우동', category: '일식', spicy: '안매운거', staple: '면', temp: '뜨거운거', priceGroup: '1만원 이하', price: 8000 },
+            { name: '소유 라멘', category: '일식', spicy: '안매운거', staple: '면', temp: '뜨거운거', priceGroup: '1만원대', price: 10000 },
+            { name: '시오 라멘', category: '일식', spicy: '안매운거', staple: '면', temp: '뜨거운거', priceGroup: '1만원대', price: 10000 },
+            { name: '야키우동', category: '일식', spicy: '안매운거', staple: '면', temp: '뜨거운거', priceGroup: '1만원대', price: 11500 },
+            { name: '카레 우동', category: '일식', spicy: '안매운거', staple: '면', temp: '뜨거운거', priceGroup: '1만원 이하', price: 9500 },
+            { name: '명란 크림 우동', category: '일식', spicy: '안매운거', staple: '면', temp: '뜨거운거', priceGroup: '1만원대', price: 13000 },
+            { name: '자루소바 (메밀소바)', category: '일식', spicy: '안매운거', staple: '면', temp: '차가운거', priceGroup: '1만원 이하', price: 9000 },
+            { name: '붓카케 우동', category: '일식', spicy: '안매운거', staple: '면', temp: '차가운거', priceGroup: '1만원대', price: 10000 },
+            { name: '매운 야키소바빵', category: '일식', spicy: '매운거', staple: '빵', temp: '뜨거운거', priceGroup: '1만원 이하', price: 5500 },
+            { name: '돈까스 카츠샌드', category: '일식', spicy: '안매운거', staple: '빵', temp: '뜨거운거', priceGroup: '1만원 이하', price: 9000 },
+            { name: '오꼬노미야끼', category: '일식', spicy: '안매운거', staple: '빵', temp: '뜨거운거', priceGroup: '1만원대', price: 16000 },
+            { name: '타코야끼', category: '일식', spicy: '안매운거', staple: '빵', temp: '뜨거운거', priceGroup: '1만원 이하', price: 6000 },
+            { name: '매운 타코야끼', category: '일식', spicy: '매운거', staple: '빵', temp: '뜨거운거', priceGroup: '1만원 이하', price: 6500 },
+            { name: '타마고 샌드위치', category: '일식', spicy: '안매운거', staple: '빵', temp: '차가운거', priceGroup: '1만원 이하', price: 6000 },
+            { name: '매운 모찌 오뎅탕', category: '일식', spicy: '매운거', staple: '떡', temp: '뜨거운거', priceGroup: '2만원대', price: 21000 },
+            { name: '키리모찌 구이', category: '일식', spicy: '안매운거', staple: '떡', temp: '뜨거운거', priceGroup: '1만원 이하', price: 7000 }
+        ];
+
+        // 선택 상태
+        let selectedCategory = '한식';
+        let selectedSpicy = '매운거';
+        let selectedStaple = '밥';
+        let selectedTemp = '뜨거운거';
+        let selectedPrice = '1만원 이하';
+
+        function setupButtons(groupId, callback) {
+            const buttons = document.querySelectorAll(`#${groupId} .btn-option`);
+            buttons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    buttons.forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    callback(btn.getAttribute('data-value'));
+                });
+            });
+        }
+
+        setupButtons('categoryGroup', (val) => selectedCategory = val);
+        setupButtons('spicyGroup', (val) => selectedSpicy = val);
+        setupButtons('stapleGroup', (val) => selectedStaple = val);
+        setupButtons('tempGroup', (val) => selectedTemp = val);
+        setupButtons('priceGroup', (val) => selectedPrice = val);
+
+        // 메뉴 추천
+        function recommendMenu() {
+            const filtered = menuData.filter(m => 
+                m.category === selectedCategory &&
+                m.spicy === selectedSpicy &&
+                m.staple === selectedStaple &&
+                m.temp === selectedTemp &&
+                m.priceGroup === selectedPrice
+            );
+
+            const resultBox = document.getElementById('resultBox');
+            const menuName = document.getElementById('menuName');
+            const menuPrice = document.getElementById('menuPrice');
+
+            document.getElementById('conditionListContainer').style.display = 'none';
+            document.getElementById('allListContainer').style.display = 'none';
+
+            if (filtered.length > 0) {
+                const random = filtered[Math.floor(Math.random() * filtered.length)];
+                menuName.textContent = random.name;
+                menuPrice.textContent = `💰 평균 예상 가격: 약 ${random.price.toLocaleString()}원`;
+            } else {
+                menuName.textContent = "😅 조건에 맞는 메뉴가 없어요!";
+                menuPrice.textContent = "가격대나 다른 조건 옵션을 조금 다르게 선택해 보세요.";
+            }
+
+            resultBox.style.display = 'block';
+            resultBox.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 선택 조건 메뉴 보기
+        function toggleConditionList() {
+            const container = document.getElementById('conditionListContainer');
+            const tagsBox = document.getElementById('conditionTags');
+            const titleBox = document.getElementById('conditionTitle');
+
+            if (container.style.display === 'block') {
+                container.style.display = 'none';
+                return;
+            }
+
+            const filtered = menuData.filter(m => 
+                m.category === selectedCategory &&
+                m.spicy === selectedSpicy &&
+                m.staple === selectedStaple &&
+                m.temp === selectedTemp &&
+                m.priceGroup === selectedPrice
+            );
+
+            titleBox.textContent = `[${selectedCategory} | ${selectedSpicy} | ${selectedStaple} | ${selectedTemp} | ${selectedPrice}] (${filtered.length}개)`;
+            
+            if (filtered.length === 0) {
+                tagsBox.innerHTML = '<span style="font-size: 0.85rem; color:#868e96;">해당 조합의 메뉴가 없습니다.</span>';
+            } else {
+                tagsBox.innerHTML = filtered.map(m => 
+                    `<span class="tag">${m.name}<span class="price">(${m.price.toLocaleString()}원)</span></span>`
+                ).join('');
+            }
+
+            document.getElementById('allListContainer').style.display = 'none';
+            container.style.display = 'block';
+        }
+
+        // 전체 메뉴 (한식/양식/중식/일식 세분화 표시)
+        function toggleAllList() {
+            const container = document.getElementById('allListContainer');
+            const categoryBox = document.getElementById('allCategoryBox');
+
+            if (container.style.display === 'block') {
+                container.style.display = 'none';
+                return;
+            }
+
+            const categories = [
+                { key: '한식', icon: '🇰🇷' },
+                { key: '양식', icon: '🍕' },
+                { key: '중식', icon: '🇨🇳' },
+                { key: '일식', icon: '🇯🇵' }
+            ];
+
+            let htmlContent = '';
+
+            categories.forEach(cat => {
+                const list = menuData.filter(m => m.category === cat.key);
+                htmlContent += `
+                    <div class="category-header">${cat.icon} ${cat.key} (${list.length}개)</div>
+                    <div class="menu-tags">
+                        ${list.map(m => `<span class="tag">${m.name}<span class="price">(${m.price.toLocaleString()}원)</span></span>`).join('')}
+                    </div>
+                `;
+            });
+
+            categoryBox.innerHTML = htmlContent;
+            document.getElementById('conditionListContainer').style.display = 'none';
+            container.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
