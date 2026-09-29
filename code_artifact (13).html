@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>지각 변명 생성기 - 토스 스타일 초현실주의 솔루션</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Noto Sans KR -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        toss: {
+                            blue: '#3182f6',
+                            blueHover: '#1b64da',
+                            blueLight: '#e8f3ff',
+                            bg: '#f2f4f6',
+                            card: '#ffffff',
+                            textMain: '#191f28',
+                            textSub: '#8b95a1',
+                            textMuted: '#b0b8c1',
+                            border: '#e5e8eb'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Noto Sans KR', '-apple-system', 'BlinkMacSystemFont', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #f2f4f6;
+            color: #191f28;
+            -webkit-tap-highlight-color: transparent;
+            word-break: keep-all;
+        }
+
+        /* Toss Press Feedback Animation */
+        .btn-press {
+            transition: transform 0.1s cubic-bezier(0, 0, 0.2, 1), background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+        .btn-press:active {
+            transform: scale(0.97);
+        }
+
+        /* Active Select State */
+        .select-chip-active {
+            background-color: #e8f3ff !important;
+            border-color: #3182f6 !important;
+            color: #3182f6 !important;
+            font-weight: 700 !important;
+        }
+
+        /* Page View Slide/Fade Transitions */
+        .page-view {
+            display: none;
+            opacity: 0;
+            transform: translateY(12px);
+            transition: opacity 0.25s ease-out, transform 0.25s ease-out;
+        }
+        .page-view.active {
+            display: flex;
+            flex-direction: column;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Toast animation */
+        @keyframes toastUp {
+            from { opacity: 0; transform: translate(-50%, 16px); }
+            to { opacity: 1; transform: translate(-50%, 0); }
+        }
+        .toast-show {
+            animation: toastUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* Custom scrollbar for clean UI */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d1d6db;
+            border-radius: 9999px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex justify-center items-center p-0 sm:p-4">
+
+<!-- Main App Container (Mobile Frame) -->
+<div class="w-full max-w-md min-h-screen sm:min-h-[820px] sm:max-h-[880px] bg-white sm:rounded-[32px] shadow-2xl flex flex-col justify-between overflow-hidden relative border border-gray-100">
+
+    <!-- Top Header -->
+    <header id="app-header" class="px-6 pt-5 pb-3 bg-white/90 backdrop-blur-md sticky top-0 z-30 flex items-center justify-between border-b border-toss-border/40">
+        <div class="flex items-center gap-3">
+            <button id="back-btn" onclick="goBack()" class="w-9 h-9 rounded-full bg-toss-bg flex items-center justify-center text-toss-textMain btn-press hidden">
+                <i class="fa-solid fa-chevron-left text-sm"></i>
+            </button>
+            <div>
+                <span class="text-xs font-bold text-toss-blue tracking-tight">지각 변명 생성기</span>
+                <h1 id="header-title" class="text-base font-extrabold text-toss-textMain leading-tight">상황 맞춤 솔루션</h1>
+            </div>
+        </div>
+        <!-- Progress Dots / Indicator -->
+        <div id="step-indicator" class="hidden flex items-center gap-1.5 text-xs font-extrabold text-toss-blue bg-toss-blueLight px-3 py-1 rounded-full">
+            <span>Step</span>
+            <span id="step-num">1</span>
+            <span class="text-toss-textMuted font-normal">/ 3</span>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 overflow-y-auto px-6 py-5 relative">
+
+        <!-- VIEW 0: LANDING PAGE -->
+        <section id="view-landing" class="page-view active flex-1 justify-between space-y-6">
+            <div class="space-y-6 pt-4">
+                <div class="w-14 h-14 rounded-2xl bg-toss-blueLight text-toss-blue flex items-center justify-center text-2xl font-bold shadow-sm">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </div>
+                <div class="space-y-2">
+                    <h2 class="text-2xl font-black text-toss-textMain leading-snug">
+                        지각했을 때,<br>가장 완벽한 카톡을<br>써드립니다.
+                    </h2>
+                    <p class="text-sm font-medium text-toss-textSub leading-relaxed">
+                        상대방과의 관계부터 시간, 지각 사유까지 고려해<br>
+                        이질감 제로의 초현실주의 문장을 만들어드립니다.
+                    </p>
+                </div>
+
+                <!-- Feature Highlights -->
+                <div class="space-y-3 pt-2">
+                    <div class="p-4 rounded-2xl bg-toss-bg flex items-center gap-3.5">
+                        <div class="w-9 h-9 rounded-xl bg-white flex items-center justify-center text-toss-blue text-sm shadow-xs font-bold">
+                            <i class="fa-solid fa-bolt"></i>
+                        </div>
+                        <div>
+                            <div class="text-xs font-bold text-toss-textMain">100% 이모지 제거 매너 문구</div>
+                            <div class="text-[11px] font-medium text-toss-textSub">카톡·문자에서 군더더기 없는 현실 말투</div>
+                        </div>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-toss-bg flex items-center gap-3.5">
+                        <div class="w-9 h-9 rounded-xl bg-white flex items-center justify-center text-toss-blue text-sm shadow-xs font-bold">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <div>
+                            <div class="text-xs font-bold text-toss-textMain">관계별 명확한 어조 조율</div>
+                            <div class="text-[11px] font-medium text-toss-textSub">상사, 연인, 친구, 고객 등 6가지 대상 분화</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-4 pb-2">
+                <button onclick="nextStep(1)" class="btn-press w-full h-14 bg-toss-blue hover:bg-toss-blueHover active:bg-toss-blueHover text-white font-extrabold rounded-2xl text-base shadow-lg shadow-toss-blue/20 flex items-center justify-center gap-2">
+                    <span>변명 만들기 시작</span>
+                    <i class="fa-solid fa-arrow-right text-xs"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- VIEW 1: STEP 1 (Relationship & Time) -->
+        <section id="view-step1" class="page-view flex-1 justify-between space-y-6">
+            <div class="space-y-6">
+                <!-- Title -->
+                <div>
+                    <h2 class="text-xl font-extrabold text-toss-textMain">누구에게 보내시나요?</h2>
+                    <p class="text-xs font-medium text-toss-textSub mt-1">상대와의 관계에 맞춰 호칭과 예의 범주가 결정됩니다.</p>
+                </div>
+
+                <!-- Relationship Chips (Grid) -->
+                <div class="grid grid-cols-2 gap-2.5" id="target-grid">
+                    <button onclick="setTarget('동성 친구', this)" class="target-chip select-chip-active btn-press h-14 px-4 rounded-2xl border border-toss-border bg-white text-left flex items-center justify-between text-xs font-bold text-toss-textMain">
+                        <span>동성 친구</span>
+                        <i class="fa-solid fa-check text-toss-blue text-xs opacity-100 check-ic"></i>
+                    </button>
+                    <button onclick="setTarget('이성 친구', this)" class="target-chip btn-press h-14 px-4 rounded-2xl border border-toss-border bg-white text-left flex items-center justify-between text-xs font-bold text-toss-textMain">
+                        <span>이성 친구</span>
+                        <i class="fa-solid fa-check text-toss-blue text-xs opacity-0 check-ic"></i>
+                    </button>
+                    <button onclick="setTarget('연인', this)" class="target-chip btn-press h-14 px-4 rounded-2xl border border-toss-border bg-white text-left flex items-center justify-between text-xs font-bold text-toss-textMain">
+                        <span>연인</span>
+                        <i class="fa-solid fa-check text-toss-blue text-xs opacity-0 check-ic"></i>
+                    </button>
+                    <button onclick="setTarget('후배', this)" class="target-chip btn-press h-14 px-4 rounded-2xl border border-toss-border bg-white text-left flex items-center justify-between text-xs font-bold text-toss-textMain">
+                        <span>후배</span>
+                        <i class="fa-solid fa-check text-toss-blue text-xs opacity-0 check-ic"></i>
+                    </button>
+                    <button onclick="setTarget('직장 상사 / 선배', this)" class="target-chip btn-press h-14 px-4 rounded-2xl border border-toss-border bg-white text-left flex items-center justify-between text-xs font-bold text-toss-textMain">
+                        <span>직장 상사 / 선배</span>
+                        <i class="fa-solid fa-check text-toss-blue text-xs opacity-0 check-ic"></i>
+                    </button>
+                    <button onclick="setTarget('비즈니스 / 고객', this)" class="target-chip btn-press h-14 px-4 rounded-2xl border border-toss-border bg-white text-left flex items-center justify-between text-xs font-bold text-toss-textMain">
+                        <span>비즈니스 / 고객</span>
+                        <i class="fa-solid fa-check text-toss-blue text-xs opacity-0 check-ic"></i>
+                    </button>
+                </div>
+
+                <!-- Time Delay Inputs -->
+                <div class="space-y-4 pt-2">
+                    <div>
+                        <label class="block text-xs font-extrabold text-toss-textMain mb-2">얼마나 늦었나요?</label>
+                        <div class="grid grid-cols-4 gap-2" id="late-time-grid">
+                            <button onclick="setLateTime('10분', this)" class="late-chip select-chip-active btn-press py-3 rounded-xl border border-toss-border bg-white text-xs font-bold text-toss-textMain text-center">10분</button>
+                            <button onclick="setLateTime('20분', this)" class="late-chip btn-press py-3 rounded-xl border border-toss-border bg-white text-xs font-bold text-toss-textMain text-center">20분</button>
+                            <button onclick="setLateTime('30분', this)" class="late-chip btn-press py-3 rounded-xl border border-toss-border bg-white text-xs font-bold text-toss-textMain text-center">30분</button>
+                            <button onclick="setLateTime('1시간 이상', this)" class="late-chip btn-press py-3 rounded-xl border border-toss-border bg-white text-xs font-bold text-toss-textMain text-center">1시간+</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-extrabold text-toss-textMain mb-2">얼마나 더 걸릴 것 같나요?</label>
+                        <div class="grid grid-cols-3 gap-2" id="eta-time-grid">
+                            <button onclick="setEtaTime('금방 (5분 내)', this)" class="eta-chip select-chip-active btn-press py-3 rounded-xl border border-toss-border bg-white text-xs font-bold text-toss-textMain text-center">금방 (5분 내)</button>
+                            <button onclick="setEtaTime('10~15분 내', this)" class="eta-chip btn-press py-3 rounded-xl border border-toss-border bg-white text-xs font-bold text-toss-textMain text-center">10~15분 내</button>
+                            <button onclick="setEtaTime('30분 이상', this)" class="eta-chip btn-press py-3 rounded-xl border border-toss-border bg-white text-xs font-bold text-toss-textMain text-center">30분 이상</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-4 pb-2">
+                <button onclick="nextStep(2)" class="btn-press w-full h-14 bg-toss-blue hover:bg-toss-blueHover text-white font-extrabold rounded-2xl text-base flex items-center justify-center gap-2 shadow-lg shadow-toss-blue/20">
+                    <span>다음 단계로</span>
+                    <i class="fa-solid fa-chevron-right text-xs"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- VIEW 2: STEP 2 (Causes & Quick Tags) -->
+        <section id="view-step2" class="page-view flex-1 justify-between space-y-6">
+            <div class="space-y-6">
+                <div>
+                    <h2 class="text-xl font-extrabold text-toss-textMain">어떤 사유인가요?</h2>
+                    <p class="text-xs font-medium text-toss-textSub mt-1">자주 쓰는 지각 사유 태그를 선택하거나 직접 작성하세요.</p>
+                </div>
+
+                <!-- Quick Cause Tags -->
+                <div class="space-y-2">
+                    <label class="block text-xs font-extrabold text-toss-textMain">빠른 추천 태그 (복수 선택 가능)</label>
+                    <div class="flex flex-wrap gap-2" id="cause-tags-container">
+                        <button onclick="toggleCauseTag('대중교통 지연', this)" class="cause-tag select-chip-active btn-press px-3.5 py-2.5 rounded-full border border-toss-border bg-white text-xs font-bold text-toss-textMain flex items-center gap-1.5">
+                            <i class="fa-solid fa-bus text-[11px]"></i> 대중교통 지연
+                        </button>
+                        <button onclick="toggleCauseTag('전철 반대방향', this)" class="cause-tag btn-press px-3.5 py-2.5 rounded-full border border-toss-border bg-white text-xs font-bold text-toss-textMain flex items-center gap-1.5">
+                            <i class="fa-solid fa-train text-[11px]"></i> 전철 반대방향
+                        </button>
+                        <button onclick="toggleCauseTag('갑자기 아픔', this)" class="cause-tag btn-press px-3.5 py-2.5 rounded-full border border-toss-border bg-white text-xs font-bold text-toss-textMain flex items-center gap-1.5">
+                            <i class="fa-solid fa-notes-medical text-[11px]"></i> 갑자기 아픔
+                        </button>
+                        <button onclick="toggleCauseTag('택시 안 잡힘', this)" class="cause-tag btn-press px-3.5 py-2.5 rounded-full border border-toss-border bg-white text-xs font-bold text-toss-textMain flex items-center gap-1.5">
+                            <i class="fa-solid fa-taxi text-[11px]"></i> 택시 안 잡힘
+                        </button>
+                        <button onclick="toggleCauseTag('알람 미작동/착오', this)" class="cause-tag btn-press px-3.5 py-2.5 rounded-full border border-toss-border bg-white text-xs font-bold text-toss-textMain flex items-center gap-1.5">
+                            <i class="fa-solid fa-clock text-[11px]"></i> 알람 미작동/착오
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Custom Detail Input -->
+                <div class="space-y-2">
+                    <label class="block text-xs font-extrabold text-toss-textMain">추가 구체적 상황 (선택사항)</label>
+                    <textarea id="custom-detail-text" rows="3" placeholder="예: 2호선 환승 구간 사람이 너무 많아 전철 2대를 그냥 보냄, 신호대기 극심 등"
+                        class="w-full bg-toss-bg border border-toss-border focus:border-toss-blue focus:bg-white rounded-2xl p-4 text-xs text-toss-textMain placeholder-toss-textMuted outline-none resize-none transition-all"></textarea>
+                </div>
+            </div>
+
+            <div class="pt-4 pb-2">
+                <button onclick="nextStep(3)" class="btn-press w-full h-14 bg-toss-blue hover:bg-toss-blueHover text-white font-extrabold rounded-2xl text-base flex items-center justify-center gap-2 shadow-lg shadow-toss-blue/20">
+                    <span>다음 단계로</span>
+                    <i class="fa-solid fa-chevron-right text-xs"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- VIEW 3: STEP 3 (Tone & Photo Option) -->
+        <section id="view-step3" class="page-view flex-1 justify-between space-y-6">
+            <div class="space-y-5">
+                <div>
+                    <h2 class="text-xl font-extrabold text-toss-textMain">어떤 어조로 전달할까요?</h2>
+                    <p class="text-xs font-medium text-toss-textSub mt-1">원하는 분위기를 정하면 문맥을 최적화합니다.</p>
+                </div>
+
+                <!-- Tone Options -->
+                <div class="grid grid-cols-2 gap-2.5" id="tone-grid">
+                    <button onclick="setTone('정석 사과', this)" class="tone-chip select-chip-active btn-press p-3.5 rounded-2xl border border-toss-border bg-white text-left">
+                        <div class="text-xs font-bold text-toss-textMain">정석 사과</div>
+                        <div class="text-[10px] text-toss-textSub mt-0.5 font-medium">깔끔하고 예의 바른 표준 스타일</div>
+                    </button>
+                    <button onclick="setTone('센스 유머', this)" class="tone-chip btn-press p-3.5 rounded-2xl border border-toss-border bg-white text-left">
+                        <div class="text-xs font-bold text-toss-textMain">센스 보상</div>
+                        <div class="text-[10px] text-toss-textSub mt-0.5 font-medium">커피/음료 등 공약 제시형</div>
+                    </button>
+                    <button onclick="setTone('극존칭 정중', this)" class="tone-chip btn-press p-3.5 rounded-2xl border border-toss-border bg-white text-left">
+                        <div class="text-xs font-bold text-toss-textMain">극존칭 정중</div>
+                        <div class="text-[10px] text-toss-textSub mt-0.5 font-medium">비즈니스/상사용 결례 방지형</div>
+                    </button>
+                    <button onclick="setTone('긴급 당황', this)" class="tone-chip btn-press p-3.5 rounded-2xl border border-toss-border bg-white text-left">
+                        <div class="text-xs font-bold text-toss-textMain">긴급 당황</div>
+                        <div class="text-[10px] text-toss-textSub mt-0.5 font-medium">정신없이 뛰어가는 긴박함 강조</div>
+                    </button>
+                </div>
+
+                <!-- Optional Photo Attachment Card -->
+                <div class="p-4 rounded-2xl bg-toss-bg border border-toss-border/80 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-regular fa-image text-toss-blue text-sm"></i>
+                            <span class="text-xs font-bold text-toss-textMain">증빙 사진 첨부 안내</span>
+                        </div>
+                        <span class="text-[10px] font-extrabold text-toss-blue bg-toss-blueLight px-2 py-0.5 rounded-md">사진 필요 없음</span>
+                    </div>
+                    <p class="text-[11px] font-medium text-toss-textSub leading-relaxed">
+                        텍스트 자체만으로 충분한 개연성과 자연스러움을 갖추도록 설계되었습니다. 사진 첨부 없이 바로 카톡으로 보내셔도 완벽합니다.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Explicitly labeled '핑계 생성하기' button -->
+            <div class="pt-4 pb-2">
+                <button onclick="startGenerating()" class="btn-press w-full h-14 bg-toss-blue hover:bg-toss-blueHover active:bg-toss-blueHover text-white font-extrabold rounded-2xl text-base shadow-lg shadow-toss-blue/20 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-wand-magic-sparkles text-sm"></i>
+                    <span>핑계 생성하기</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- VIEW 4: LOADING SCREEN -->
+        <section id="view-loading" class="page-view flex-1 justify-center items-center text-center py-12 space-y-6">
+            <div class="relative w-16 h-16 flex items-center justify-center">
+                <div class="absolute inset-0 border-4 border-toss-blueLight rounded-full"></div>
+                <div class="absolute inset-0 border-4 border-toss-blue border-t-transparent rounded-full animate-spin"></div>
+                <i class="fa-solid fa-message text-toss-blue text-sm animate-pulse"></i>
+            </div>
+            
+            <div class="space-y-1.5">
+                <h3 id="loading-msg" class="text-base font-extrabold text-toss-textMain">상대방과의 관계 분석 중...</h3>
+                <p class="text-xs font-medium text-toss-textSub">이모지 없이 100% 자연스러운 카톡 문장을 작성합니다.</p>
+            </div>
+        </section>
+
+        <!-- VIEW 5: RESULT SCREEN -->
+        <section id="view-result" class="page-view flex-1 justify-between space-y-5">
+            <div class="space-y-4">
+                <!-- Summary Tag -->
+                <div class="flex items-center justify-between bg-toss-blueLight px-4 py-3 rounded-2xl">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-toss-blue"></span>
+                        <span id="result-summary-text" class="text-xs font-bold text-toss-blue">직장 상사 / 선배 • 대중교통 지연</span>
+                    </div>
+                    <span class="text-[10px] font-extrabold text-toss-blue bg-white px-2 py-0.5 rounded-full shadow-2xs">4종 완성</span>
+                </div>
+
+                <!-- 4 KakaoTalk Result Cards (Emoji-Free) -->
+                <div class="space-y-3" id="cards-container">
+                    
+                    <!-- Card 1 -->
+                    <div class="bg-toss-bg border border-toss-border/70 rounded-2xl p-4 space-y-2.5 relative group">
+                        <div class="flex items-center justify-between border-b border-toss-border/50 pb-2">
+                            <span class="text-[11px] font-extrabold text-toss-textMain flex items-center gap-1.5">
+                                <span class="w-1.5 h-1.5 rounded-full bg-toss-blue"></span> 1. 기본 정석형
+                            </span>
+                            <button onclick="copyCardText('res-card-1', this)" class="btn-press text-[11px] font-bold text-toss-blue bg-white border border-toss-border px-3 py-1 rounded-xl flex items-center gap-1 hover:bg-toss-blueLight">
+                                <i class="fa-regular fa-copy text-[10px]"></i> 복사하기
+                            </button>
+                        </div>
+                        <p id="res-card-1" class="text-xs font-medium text-toss-textMain leading-relaxed whitespace-pre-line"></p>
+                    </div>
+
+                    <!-- Card 2 (Recommended) -->
+                    <div class="bg-toss-blueLight/50 border border-toss-blue/30 rounded-2xl p-4 space-y-2.5 relative">
+                        <div class="flex items-center justify-between border-b border-toss-blue/20 pb-2">
+                            <span class="text-[11px] font-extrabold text-toss-blue flex items-center gap-1.5">
+                                <i class="fa-solid fa-thumbs-up text-[10px]"></i> 2. 현실 센스형 (보상 공약)
+                            </span>
+                            <button onclick="copyCardText('res-card-2', this)" class="btn-press text-[11px] font-bold text-white bg-toss-blue px-3 py-1 rounded-xl flex items-center gap-1 shadow-xs hover:bg-toss-blueHover">
+                                <i class="fa-regular fa-copy text-[10px]"></i> 복사하기
+                            </button>
+                        </div>
+                        <p id="res-card-2" class="text-xs font-semibold text-toss-textMain leading-relaxed whitespace-pre-line"></p>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="bg-toss-bg border border-toss-border/70 rounded-2xl p-4 space-y-2.5 relative">
+                        <div class="flex items-center justify-between border-b border-toss-border/50 pb-2">
+                            <span class="text-[11px] font-extrabold text-toss-textMain flex items-center gap-1.5">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> 3. 긴급 현장 강조형
+                            </span>
+                            <button onclick="copyCardText('res-card-3', this)" class="btn-press text-[11px] font-bold text-toss-blue bg-white border border-toss-border px-3 py-1 rounded-xl flex items-center gap-1 hover:bg-toss-blueLight">
+                                <i class="fa-regular fa-copy text-[10px]"></i> 복사하기
+                            </button>
+                        </div>
+                        <p id="res-card-3" class="text-xs font-medium text-toss-textMain leading-relaxed whitespace-pre-line"></p>
+                    </div>
+
+                    <!-- Card 4 -->
+                    <div class="bg-toss-bg border border-toss-border/70 rounded-2xl p-4 space-y-2.5 relative">
+                        <div class="flex items-center justify-between border-b border-toss-border/50 pb-2">
+                            <span class="text-[11px] font-extrabold text-toss-textMain flex items-center gap-1.5">
+                                <span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span> 4. 맞춤 어조 특화형
+                            </span>
+                            <button onclick="copyCardText('res-card-4', this)" class="btn-press text-[11px] font-bold text-toss-blue bg-white border border-toss-border px-3 py-1 rounded-xl flex items-center gap-1 hover:bg-toss-blueLight">
+                                <i class="fa-regular fa-copy text-[10px]"></i> 복사하기
+                            </button>
+                        </div>
+                        <p id="res-card-4" class="text-xs font-medium text-toss-textMain leading-relaxed whitespace-pre-line"></p>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Bottom Actions -->
+            <div class="pt-4 pb-2 space-y-2">
+                <button onclick="nextStep(1)" class="btn-press w-full h-14 bg-toss-blue hover:bg-toss-blueHover text-white font-extrabold rounded-2xl text-base shadow-lg shadow-toss-blue/20 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-rotate-right text-xs"></i>
+                    <span>조건 수정 후 다시 만들기</span>
+                </button>
+                <button onclick="showPage('view-landing')" class="btn-press w-full py-2.5 text-xs font-bold text-toss-textSub hover:text-toss-textMain text-center">
+                    처음 화면으로 돌아가기
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+</div>
+
+<!-- Toast Notification -->
+<div id="toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 bg-toss-textMain/90 backdrop-blur-md text-white text-xs font-bold px-5 py-3.5 rounded-2xl shadow-2xl opacity-0 transition-all duration-300 pointer-events-none z-50 flex items-center gap-2.5">
+    <i class="fa-solid fa-circle-check text-toss-blue text-sm"></i>
+    <span id="toast-text">카톡 문구가 클립보드에 복사되었습니다.</span>
+</div>
+
+<script>
+    // State Object
+    const appState = {
+        currentStep: 0,
+        target: '동성 친구',
+        lateTime: '10분',
+        etaTime: '금방 (5분 내)',
+        causes: ['대중교통 지연'],
+        customDetail: '',
+        tone: '정석 사과'
+    };
+
+    // View Navigation Logic
+    function showPage(pageId) {
+        document.querySelectorAll('.page-view').forEach(view => {
+            view.classList.remove('active');
+        });
+        const targetView = document.getElementById(pageId);
+        if (targetView) {
+            targetView.classList.add('active');
+            targetView.scrollTop = 0;
+        }
+
+        // Header controls
+        const backBtn = document.getElementById('back-btn');
+        const stepInd = document.getElementById('step-indicator');
+        const headerTitle = document.getElementById('header-title');
+
+        if (pageId === 'view-landing') {
+            appState.currentStep = 0;
+            backBtn.classList.add('hidden');
+            stepInd.classList.add('hidden');
+            headerTitle.innerText = '상황 맞춤 솔루션';
+        } else if (pageId.startsWith('view-step')) {
+            backBtn.classList.remove('hidden');
+            stepInd.classList.remove('hidden');
+            document.getElementById('step-num').innerText = appState.currentStep;
+            headerTitle.innerText = `단계별 조건 설정 (${appState.currentStep}/3)`;
+        } else if (pageId === 'view-loading') {
+            backBtn.classList.add('hidden');
+            stepInd.classList.add('hidden');
+            headerTitle.innerText = '생성 중...';
+        } else if (pageId === 'view-result') {
+            backBtn.classList.add('hidden');
+            stepInd.classList.add('hidden');
+            headerTitle.innerText = '생성 완료';
+        }
+    }
+
+    function goBack() {
+        if (appState.currentStep > 1) {
+            nextStep(appState.currentStep - 1);
+        } else {
+            showPage('view-landing');
+        }
+    }
+
+    function nextStep(stepNum) {
+        appState.currentStep = stepNum;
+        showPage(`view-step${stepNum}`);
+    }
+
+    /* Target Selection Handler */
+    function setTarget(val, btnEl) {
+        appState.target = val;
+        document.querySelectorAll('.target-chip').forEach(el => {
+            el.classList.remove('select-chip-active');
+            const check = el.querySelector('.check-ic');
+            if (check) check.classList.add('opacity-0');
+        });
+        btnEl.classList.add('select-chip-active');
+        const check = btnEl.querySelector('.check-ic');
+        if (check) check.classList.remove('opacity-0');
+    }
+
+    /* Time Selection Handlers */
+    function setLateTime(val, btnEl) {
+        appState.lateTime = val;
+        document.querySelectorAll('.late-chip').forEach(el => el.classList.remove('select-chip-active'));
+        btnEl.classList.add('select-chip-active');
+    }
+
+    function setEtaTime(val, btnEl) {
+        appState.etaTime = val;
+        document.querySelectorAll('.eta-chip').forEach(el => el.classList.remove('select-chip-active'));
+        btnEl.classList.add('select-chip-active');
+    }
+
+    /* Cause Tags Multi-select Handler */
+    function toggleCauseTag(tag, btnEl) {
+        const idx = appState.causes.indexOf(tag);
+        if (idx > -1) {
+            if (appState.causes.length > 1) {
+                appState.causes.splice(idx, 1);
+                btnEl.classList.remove('select-chip-active');
+            }
+        } else {
+            appState.causes.push(tag);
+            btnEl.classList.add('select-chip-active');
+        }
+    }
+
+    /* Tone Selection Handler */
+    function setTone(val, btnEl) {
+        appState.tone = val;
+        document.querySelectorAll('.tone-chip').forEach(el => el.classList.remove('select-chip-active'));
+        btnEl.classList.add('select-chip-active');
+    }
+
+    /* Generator Trigger */
+    function startGenerating() {
+        appState.customDetail = document.getElementById('custom-detail-text').value.trim();
+        
+        showPage('view-loading');
+
+        const loadingMsgs = [
+            '상대방과의 관계 분석 중...',
+            '자연스러운 카톡 어조 조율 중...',
+            '이모지 없이 완벽한 정석 문구 생성 중...'
+        ];
+
+        let msgIdx = 0;
+        const msgEl = document.getElementById('loading-msg');
+        const interval = setInterval(() => {
+            msgIdx = (msgIdx + 1) % loadingMsgs.length;
+            msgEl.innerText = loadingMsgs[msgIdx];
+        }, 350);
+
+        setTimeout(() => {
+            clearInterval(interval);
+            buildResultTexts();
+            showPage('view-result');
+        }, 1100);
+    }
+
+    /* Hyper-Realistic Emoji-Free Korean Message Generator */
+    function buildResultTexts() {
+        const { target, lateTime, etaTime, causes, customDetail, tone } = appState;
+        
+        const mainCause = causes.join(', ') || '대중교통 지연';
+        const causeDetailStr = customDetail ? `${mainCause}(${customDetail})` : mainCause;
+
+        document.getElementById('result-summary-text').innerText = `${target} • ${mainCause}`;
+
+        let c1 = "", c2 = "", c3 = "", c4 = "";
+
+        /* ==================== 1. 직장 상사 / 선배 ==================== */
+        if (target === '직장 상사 / 선배') {
+            c1 = `팀장님, 출근길에 정말 죄송합니다.\n이동 중 ${causeDetailStr} 사유로 지연이 발생하였습니다.\n도착 예정 시각은 약 ${etaTime} 후입니다. 늦어지는 만큼 도착하자마자 신속히 준비하여 업무에 차질 없도록 하겠습니다. 죄송합니다.`;
+            
+            c2 = `선배님, 오시는 길에 본의 아니게 ${causeDetailStr} 사태가 생겨 약 ${lateTime} 정도 지연될 것 같습니다.\n도착하자마자 바로 자리 정돈하고 급한 건부터 처리하겠습니다. 오시는 길 불편을 드려 죄송하며, 도착해서 시원한 음료 한 잔 바로 챙겨드리겠습니다.`;
+
+            c3 = `팀장님, 미리 출발했으나 현재 ${causeDetailStr} 상황으로 인해 발이 묶여 있는 상태입니다.\n최대한 빨리 이동하고 있으며 ${etaTime} 안으로도착할 예정입니다. 이동하는 동안 슬랙 및 메일 지속해서 확인하고 있겠습니다. 죄송합니다.`;
+
+            if (tone === '긴급 당황') {
+                c4 = `팀장님 죄송합니다. 이동 중에 갑작스럽게 ${causeDetailStr} 건이 발생하여 급히 수습하며 이동 중입니다.\n약 ${etaTime} 정도 지연될 것 같은데, 뛰어 도착하는 대로 신속히 보고드리고 업무 시작하겠습니다.`;
+            } else if (tone === '극존칭 정중') {
+                c4 = `팀장님, 약속된 출근 시각을 엄수하지 못해 진심으로 사과드립니다.\n금일 이동 과정에서 ${causeDetailStr} 문제로 소요 시간이 지연되고 있습니다.\n약 ${etaTime} 내에 도착할 것으로 예상되며, 차후 이러한 일이 없도록 각별히 유의하겠습니다.`;
+            } else {
+                c4 = `선배님, 오시는 길에 ${causeDetailStr} 사정으로 시각을 맞추지 못해 죄송합니다.\n현재 전속력으로 이동 중이며 ${etaTime} 후도착 예정입니다. 도착하는 대로 바로 업무 개시하겠습니다.`;
+            }
+        }
+
+        /* ==================== 2. 비즈니스 / 고객 ==================== */
+        else if (target === '비즈니스 / 고객') {
+            c1 = `대표님, 오늘 약속 장소로 이동하던 중 예상치 못한 ${causeDetailStr} 문제로 당초 약속드렸던 시각보다 약 ${lateTime}가량 늦어질 것으로 예상됩니다.\n귀한 시간 내어주셨는데 미리 일정 변수를 철저히 체크하지 못해 진심으로 사과드립니다. 최대한 신속히 이동하여 도착 시 바로 연락드리겠습니다.`;
+
+            c2 = `담당자님, 이동 중 ${causeDetailStr} 건으로 동선에 지연이 발생하여 송구합니다.\n도착 예정 시각은 약 ${etaTime} 후입니다. 기다리시는 동안 불편함이 없으시도록 미리 미팅 자료를 전달해 두었으며, 도착하자마자 바로 인사를 올리겠습니다.`;
+
+            c3 = `대표님, 미팅 장소로 가던 중 ${causeDetailStr} 사정이 생겨 약 ${lateTime} 늦을 것으로 확인됩니다.\n약속 시각을 엄수하지 못해 깊이 사과드리며, 현장도착 5분 전에 미리 다시 한번 연락드리겠습니다. 죄송합니다.`;
+
+            c4 = `담당자님, 오늘 미팅 건으로 이동 중에 ${causeDetailStr} 사유가 발생하여 시각이 지연되고 있습니다.\n약 ${etaTime} 뒤도착 예정이며, 서둘러 이동하여 오차 없이 미팅 진행될 수 있도록 최선을 다하겠습니다. 양해를 부탁드립니다.`;
+        }
+
+        /* ==================== 3. 동성 친구 ==================== */
+        else if (target === '동성 친구') {
+            c1 = `야 진짜 미안하다 오다가 ${causeDetailStr} 때문에 동선 완전 꼬여서 한 ${lateTime} 지각임\n도착하려면 ${etaTime} 정도 걸릴 것 같은데 먼저 따뜻한 데 들어가 있어라 오자마자 도게자 박을게`;
+
+            c2 = `아 미친 진짜 미안 오다가 ${causeDetailStr} 터져서 이제 이동 중이다\n약 ${etaTime} 뒤에 도착하니까 오자마자 내가 시원한 커피나 맛있는 거 쏠게 먼저 들어가서 쉬고 있어 미안!!`;
+
+            c3 = `야 나 지금 미친 듯이 전속력으로 뛰어가는 중인데 ${causeDetailStr} 때문에 아무리 뛰어도 ${lateTime} 늦는다\n한눈 안 팔고 직진 중이니까 조금만 기다려주라 진짜 미안`;
+
+            if (tone === '센스 유머') {
+                c4 = `야 지구의 중력이 오늘따라 강력해서 + ${causeDetailStr} 사태까지 터짐\n약 ${etaTime} 지연 예정인데 오자마자 도게자 할 테니까 때리지 마라 맛집 내가 계산함`;
+            } else {
+                c4 = `야 약속 시간 못 맞춰서 진짜 미안하다\n${causeDetailStr} 이유로 예상보다 ${lateTime} 늦어지고 있어\n도착하자마자 제대로 사과할게 천천히 오고 있어라`;
+            }
+        }
+
+        /* ==================== 4. 이성 친구 ==================== */
+        else if (target === '이성 친구') {
+            c1 = `아 진짜 미안해 오다가 ${causeDetailStr} 생겨서 예상보다 한 ${lateTime} 정도 늦을 것 같아\n먼저 카페 들어가서 기다리고 있어 오자마자 내가 맛있는 거 사줄게 미안해`;
+
+            c2 = `미안미안 나오다가 갑자기 ${causeDetailStr} 터져서 차질이 생겼어\n딱 ${etaTime} 뒤에 도착하니까 어디 추운데 서 있지 말고 따뜻한 데 들어가 있어줘 오자마자 맛있는 커피 사줄게`;
+
+            c3 = `아 속상하다 진짜 오다가 ${causeDetailStr} 때문에 발이 묶여서 서두르는 중이야\n${etaTime} 안으로 무조건 도착하니까 조금만 기다려줘 미안해`;
+
+            c4 = `약속 시간 제때 못 지켜서 미안해\n${causeDetailStr} 사정으로 한 ${lateTime} 늦어지고 있는데 신속히 가고 있어\n도착하면 바로 연락할게`;
+        }
+
+        /* ==================== 5. 연인 ==================== */
+        else if (target === '연인') {
+            c1 = `자기야 정말 미안해 오늘 소중한 데이트인데 오다가 ${causeDetailStr} 때문에 예상보다 늦어지고 있어\n약 ${etaTime} 후 도착할 것 같은데 너무 기다리게 해서 미안해 서둘러 가고 있어`;
+
+            c2 = `자기야 진짜 미안해 아침부터 보고 싶어서 서두르다가 ${causeDetailStr} 건이 생겨버렸어\n딱 ${etaTime} 도착 예정인데 오자마자 꼭 안아주고 맛있는 거 풀코스로 모실게 조금만 기다려줘 사랑해`;
+
+            c3 = `자기야 지금 나 전속력으로 뛰어가는 중\n${causeDetailStr} 때문에 약간 차질이 생겼는데 최대한 단축해서 ${etaTime} 내로 도착할게 추운데 따뜻한 데 꼭 들어가 있어줘`;
+
+            c4 = `자기야 오늘 예쁘게 보이고 싶어서 준비하고 나오다가 ${causeDetailStr}까지 겹쳐서 ${lateTime} 늦어버렸어\n자기 볼 생각에 마음은 이미 도착해 있는데 서둘러 뛰어갈게 오자마자 쓰다듬어줘 미안해`;
+        }
+
+        /* ==================== 6. 후배 ==================== */
+        else if (target === '후배') {
+            c1 = `00아 정말 미안하다 선배가 먼저 와서 기다렸어야 했는데 오다가 ${causeDetailStr} 문제로 한 ${lateTime} 늦을 것 같다\n천천히 조심히 오고 혹시 먼저 도착하면 카페 들어가 있어라`;
+
+            c2 = `00아 약속 시간 못 지켜서 미안해\n오다가 ${causeDetailStr} 건이 생겨서 한 ${etaTime} 걸릴 것 같다\n미안한 마음 담아서 오늘 맛있는 밥이랑 커피 풀코스로 쏠 테니까 들어갈 메뉴 미리 골라놔`;
+
+            c3 = `00아 지금 서둘러 가고 있는데 ${causeDetailStr} 때문에 동선이 좀 꼬였다\n${etaTime} 정도 늦을 듯한데 도착하자마자 바로 연락할게 편하게 있어라`;
+
+            c4 = `00아 미리 연락 못 해서 미안하다 ${causeDetailStr} 건 때문에 약 ${lateTime} 지연될 예정이야\n혹시 일찍 도착하면 카페 들어가서 주문하고 영수증 챙겨둬 내가 다 계좌로 입금해 줄게 천천히 와`;
+        }
+
+        document.getElementById('res-card-1').innerText = c1;
+        document.getElementById('res-card-2').innerText = c2;
+        document.getElementById('res-card-3').innerText = c3;
+        document.getElementById('res-card-4').innerText = c4;
+    }
+
+    /* Clipboard Copy & Toast Feedback */
+    function copyCardText(cardId, btnEl) {
+        const text = document.getElementById(cardId).innerText;
+        
+        const tempTextarea = document.createElement('textarea');
+        tempTextarea.value = text;
+        document.body.appendChild(tempTextarea);
+        tempTextarea.select();
+        
+        try {
+            document.execCommand('copy');
+            
+            // Visual feedback on button
+            const originalText = btnEl.innerHTML;
+            btnEl.innerHTML = `<i class="fa-solid fa-check text-[10px]"></i> 복사완료!`;
+            btnEl.classList.add('bg-emerald-600', 'text-white');
+            
+            setTimeout(() => {
+                btnEl.innerHTML = originalText;
+                btnEl.classList.remove('bg-emerald-600', 'text-white');
+            }, 1400);
+
+            showToast("카톡 문구가 클립보드에 복사되었습니다.");
+        } catch (err) {
+            showToast("복사 실패. 직접 텍스트를 선택해 주세요.");
+        } finally {
+            document.body.removeChild(tempTextarea);
+        }
+    }
+
+    function showToast(msg) {
+        const toast = document.getElementById('toast');
+        document.getElementById('toast-text').innerText = msg;
+        toast.classList.remove('opacity-0', 'pointer-events-none');
+        toast.classList.add('opacity-100', 'toast-show');
+
+        setTimeout(() => {
+            toast.classList.remove('opacity-100', 'toast-show');
+            toast.classList.add('opacity-0', 'pointer-events-none');
+        }, 2000);
+    }
+</script>
+</body>
+</html>
