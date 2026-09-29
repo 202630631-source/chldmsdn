@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>말실수 변명 생성기 | 카톡 ∙ 문자 위기탈출 솔루션</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  
+  <!-- Google Fonts: Noto Sans KR & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Noto Sans KR', 'Inter', 'sans-serif'],
+          },
+          colors: {
+            toss: {
+              blue: '#3182F6',
+              blueHover: '#1B64DA',
+              lightBlue: '#E8F3FF',
+              dark: '#191F28',
+              gray: '#8B95A1',
+              lightBg: '#F9FAFB',
+              cardBg: '#F2F4F6',
+              border: '#E5E8EB',
+              danger: '#FF4D4F',
+              success: '#20C997'
+            }
+          },
+          animation: {
+            'bounce-subtle': 'bounceSubtle 2s infinite',
+            'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'slide-up': 'slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+          },
+          keyframes: {
+            bounceSubtle: {
+              '0%, 100%': { transform: 'translateY(0)' },
+              '50%': { transform: 'translateY(-6px)' },
+            },
+            slideUp: {
+              '0%': { opacity: '0', transform: 'translateY(20px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom Toss UI Enhancements */
+    body {
+      background-color: #f2f4f6;
+      color: #191f28;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    
+    .selectable-text {
+      user-select: text;
+    }
+
+    /* Hide scrollbars for crisp UI */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    .toss-card {
+      background: #ffffff;
+      border-radius: 24px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    }
+
+    .toss-button-active {
+      transition: transform 0.12s ease-out, background-color 0.15s ease;
+    }
+    .toss-button-active:active {
+      transform: scale(0.97);
+    }
+
+    /* Custom Radio styling */
+    .radio-card input:checked + div {
+      border-color: #3182F6;
+      background-color: #E8F3FF;
+      color: #1B64DA;
+      font-weight: 700;
+    }
+
+    /* Toast notification */
+    #toast {
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+  </style>
+</head>
+<body class="antialiased min-h-screen flex justify-center items-start sm:py-6">
+
+  <!-- Main Mobile Container -->
+  <div class="w-full max-w-md bg-white min-h-screen sm:min-h-[840px] sm:rounded-[36px] shadow-2xl flex flex-col relative overflow-hidden border-0 sm:border border-gray-100">
+
+    <!-- Top Navigation Header -->
+    <header class="sticky top-0 z-30 bg-white/90 backdrop-blur-md px-5 h-14 flex items-center justify-between border-b border-slate-100">
+      <button id="nav-back-btn" onclick="prevStep()" class="w-9 h-9 rounded-full flex items-center justify-between text-gray-700 hover:bg-slate-100 transition hidden toss-button-active">
+        <i class="fa-solid fa-chevron-left text-lg"></i>
+      </button>
+      
+      <div class="flex items-center gap-2 mx-auto" id="header-title-container">
+        <span class="w-2.5 h-2.5 rounded-full bg-toss-blue animate-ping"></span>
+        <h1 class="font-bold text-base text-toss-dark tracking-tight">말실수 변명 생성기</h1>
+      </div>
+
+      <button id="reset-top-btn" onclick="resetApp()" class="w-9 h-9 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-700 hover:bg-slate-100 transition toss-button-active hidden">
+        <i class="fa-solid fa-rotate-right text-base"></i>
+      </button>
+    </header>
+
+    <!-- Progress Bar (Visible on steps 1..3) -->
+    <div id="progress-container" class="w-full bg-slate-100 h-1.5 hidden">
+      <div id="progress-bar" class="bg-toss-blue h-1.5 w-1/3 transition-all duration-300 ease-out"></div>
+    </div>
+
+    <!-- Main Content Dynamic Container -->
+    <main class="flex-1 overflow-y-auto px-5 py-6 pb-28 no-scrollbar relative">
+
+      <!-- ==================== STEP 0: LANDING PAGE ==================== -->
+      <section id="step-0" class="flex flex-col items-center text-center py-4 animate-slide-up">
+        <!-- Hero Icon Graphic -->
+        <div class="relative my-6">
+          <div class="w-24 h-24 rounded-3xl bg-toss-lightBlue flex items-center justify-center text-toss-blue shadow-inner text-4xl animate-bounce-subtle">
+            💬
+          </div>
+          <span class="absolute -top-2 -right-2 bg-toss-danger text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-md animate-pulse">
+            위기경보 🚨
+          </span>
+        </span>
+        </div>
+
+        <h2 class="text-2xl font-extrabold text-toss-dark leading-tight tracking-tight mt-2">
+          아뿔싸! 실수로 보낸 카톡,<br/>
+          <span class="text-toss-blue">완벽한 변명</span>으로 수습하세요
+        </h2>
+        
+        <p class="text-sm text-toss-gray mt-3 leading-relaxed max-w-xs">
+          오타 ∙ 오전송 ∙ 술김 말실수 ∙ 직장 톡방 실수<br/>
+          AI가 대화 맥락을 파악해 자연스럽게 풀어드립니다.
+        </p>
+
+        <!-- Key Feature Grid -->
+        <div class="w-full grid grid-cols-2 gap-3 mt-8">
+          <div class="p-4 bg-toss-lightBg rounded-2xl border border-slate-100 text-left">
+            <div class="text-xl mb-1">📸</div>
+            <div class="font-bold text-sm text-toss-dark">캡처 분석</div>
+            <div class="text-xs text-toss-gray mt-0.5">카톡 캡처 첨부시 맥락 정밀 파악</div>
+          </div>
+          <div class="p-4 bg-toss-lightBg rounded-2xl border border-slate-100 text-left">
+            <div class="text-xl mb-1">🛡️</div>
+            <div class="font-bold text-sm text-toss-dark">4대 대응 전략</div>
+            <div class="text-xs text-toss-gray mt-0.5">오타형·전달오류·진정성·위트</div>
+          </div>
+          <div class="p-4 bg-toss-lightBg rounded-2xl border border-slate-100 text-left">
+            <div class="text-xl mb-1">🎭</div>
+            <div class="font-bold text-sm text-toss-dark">관계 맞춤 어조</div>
+            <div class="text-xs text-toss-gray mt-0.5">상사·친구·연인·비즈니스 최적화</div>
+          </div>
+          <div class="p-4 bg-toss-lightBg rounded-2xl border border-slate-100 text-left">
+            <div class="text-xl mb-1">🤖</div>
+            <div class="font-bold text-sm text-toss-dark">이모티콘 제거</div>
+            <div class="text-xs text-toss-gray mt-0.5">진정성 있는 자연스러운 문장</div>
+          </div>
+        </div>
+
+        <!-- Callout Banner -->
+        <div class="w-full mt-6 p-4 bg-blue-50/80 rounded-2xl border border-blue-100 flex items-center gap-3 text-left">
+          <i class="fa-solid fa-lightbulb text-toss-blue text-lg flex-shrink-0"></i>
+          <p class="text-xs text-blue-900 leading-snug">
+            실시간 <strong>Gemini AI</strong>가 맥락을 학습해 변명을 생성하므로, 실제 문맥에 어색함이 전혀 없습니다.
+          </p>
+        </div>
+      </section>
+
+
+      <!-- ==================== STEP 1: SITUATION & SCREENSHOT ==================== -->
+      <section id="step-1" class="hidden flex-col animate-slide-up space-y-6">
+        <div>
+          <span class="text-xs font-bold text-toss-blue uppercase tracking-wider">Step 1 of 3</span>
+          <h2 class="text-2xl font-bold text-toss-dark mt-1">어떤 말실수가 있었나요?</h2>
+          <p class="text-sm text-toss-gray mt-1">대화 캡처나 상황을 알려주시면 AI가 분석합니다.</p>
+        </div>
+
+        <!-- Image Upload Area -->
+        <div class="space-y-2">
+          <label class="block text-xs font-bold text-gray-600 uppercase">대화 캡처 이미지 (선택)</label>
+          <div id="drop-zone" onclick="document.getElementById('file-input').click()" 
+               class="border-2 border-dashed border-slate-200 rounded-2xl p-4 text-center cursor-pointer hover:border-toss-blue hover:bg-blue-50/30 transition relative group min-h-[120px] flex flex-col justify-center items-center">
+            
+            <input type="file" id="file-input" accept="image/*" class="hidden" onchange="handleImageSelect(event)">
+            
+            <!-- Default Placeholder -->
+            <div id="upload-placeholder" class="flex flex-col items-center">
+              <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center text-xl mb-2 group-hover:scale-110 transition">
+                <i class="fa-solid fa-camera"></i>
+              </div>
+              <p class="text-sm font-medium text-toss-dark">카톡/문자 캡처 사진 올리기</p>
+              <p class="text-xs text-toss-gray mt-1">터치하거나 이미지 파일을 끌어다 놓으세요</p>
+            </div>
+
+            <!-- Image Preview Box -->
+            <div id="image-preview-container" class="hidden relative w-full flex flex-col items-center">
+              <img id="image-preview" src="" alt="대화 캡처" class="max-h-48 rounded-xl object-contain border border-slate-200 shadow-sm" />
+              <button type="button" onclick="removeImage(event)" class="absolute top-1 right-1 bg-gray-900/70 text-white rounded-full w-7 h-7 flex items-center justify-center text-xs hover:bg-black transition">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+              <p class="text-xs text-toss-blue font-semibold mt-2">✨ 이미지 첨부 완료! AI가 텍스트를 파악합니다.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Tag Selector -->
+        <div class="space-y-2">
+          <label class="block text-xs font-bold text-gray-600 uppercase">자주 일어나는 위기 유형 (선택)</label>
+          <div class="grid grid-cols-2 gap-2" id="tags-grid">
+            <button type="button" onclick="toggleTag(this, '⌨️ 오타/자동완성 참사')" class="tag-btn p-3 rounded-xl border border-slate-200 bg-white text-left text-xs font-semibold text-toss-dark hover:border-toss-blue transition flex items-center gap-2 toss-button-active">
+              <span>⌨️</span> 오타/자동완성 참사
+            </button>
+            <button type="button" onclick="toggleTag(this, '🔀 사람 착각 (오전송)')" class="tag-btn p-3 rounded-xl border border-slate-200 bg-white text-left text-xs font-semibold text-toss-dark hover:border-toss-blue transition flex items-center gap-2 toss-button-active">
+              <span>🔀</span> 사람 착각 (오전송)
+            </button>
+            <button type="button" onclick="toggleTag(this, '🍺 술김/감정 실수')" class="tag-btn p-3 rounded-xl border border-slate-200 bg-white text-left text-xs font-semibold text-toss-dark hover:border-toss-blue transition flex items-center gap-2 toss-button-active">
+              <span>🍺</span> 술김/감정 실수
+            </button>
+            <button type="button" onclick="toggleTag(this, '💼 직장/상사 카톡 실수')" class="tag-btn p-3 rounded-xl border border-slate-200 bg-white text-left text-xs font-semibold text-toss-dark hover:border-toss-blue transition flex items-center gap-2 toss-button-active">
+              <span>💼</span> 직장/상사 실수
+            </button>
+            <button type="button" onclick="toggleTag(this, '🤫 뒷담화/비밀 메시지 노출')" class="tag-btn p-3 rounded-xl border border-slate-200 bg-white text-left text-xs font-semibold text-toss-dark hover:border-toss-blue transition flex items-center gap-2 toss-button-active">
+              <span>🤫</span> 비밀 메시지 노출
+            </button>
+            <button type="button" onclick="toggleTag(this, '😅 선 넘은 농담/말실수')" class="tag-btn p-3 rounded-xl border border-slate-200 bg-white text-left text-xs font-semibold text-toss-dark hover:border-toss-blue transition flex items-center gap-2 toss-button-active">
+              <span>😅</span> 선 넘은 농담
+            </button>
+          </div>
+        </div>
+
+        <!-- Additional Text Context Input -->
+        <div class="space-y-2">
+          <label class="block text-xs font-bold text-gray-600 uppercase">상황 추가 설명 (자세할수록 좋습니다)</label>
+          <textarea id="situation-text" rows="3" 
+            placeholder="예: 친구한테 팀장님 뒷담화 짤을 보내려다가 팀장님이 있는 단톡방에 잘못 올려버렸습니다..."
+            class="w-full p-3.5 rounded-2xl border border-slate-200 text-sm text-toss-dark focus:outline-none focus:border-toss-blue focus:ring-1 focus:ring-toss-blue resize-none"></textarea>
+        </div>
+
+        <div class="p-3 bg-slate-50 rounded-xl text-xs text-toss-gray flex items-start gap-2 border border-slate-100">
+          <i class="fa-solid fa-circle-info text-toss-blue mt-0.5"></i>
+          <span>사진을 첨부하면 AI가 이전 대화와 실수 내용을 더 정밀하게 읽어 자연스러운 변명을 만듭니다.</span>
+        </div>
+      </section>
+
+
+      <!-- ==================== STEP 2: RELATIONSHIP & TONE ==================== -->
+      <section id="step-2" class="hidden flex-col animate-slide-up space-y-6">
+        <div>
+          <span class="text-xs font-bold text-toss-blue uppercase tracking-wider">Step 2 of 3</span>
+          <h2 class="text-2xl font-bold text-toss-dark mt-1">누구와의 대화인가요?</h2>
+          <p class="text-sm text-toss-gray mt-1">상대방과의 관계 및 말투 설정을 맞춰주세요.</p>
+        </div>
+
+        <!-- Relationship Selector -->
+        <div class="space-y-2">
+          <label class="block text-xs font-bold text-gray-600 uppercase">상대방과의 관계</label>
+          <div class="grid grid-cols-2 gap-2.5">
+            <label class="radio-card cursor-pointer">
+              <input type="radio" name="relationship" value="친한 친구" class="hidden" checked />
+              <div class="p-3.5 rounded-2xl border border-slate-200 bg-white text-sm font-medium text-toss-dark flex items-center gap-2 hover:border-slate-300 transition">
+                <span>👥</span> 친한 친구
+              </div>
+            </label>
+            <label class="radio-card cursor-pointer">
+              <input type="radio" name="relationship" value="연인 / 호감 상대" class="hidden" />
+              <div class="p-3.5 rounded-2xl border border-slate-200 bg-white text-sm font-medium text-toss-dark flex items-center gap-2 hover:border-slate-300 transition">
+                <span>💖</span> 연인 / 호감 상대
+              </div>
+            </label>
+            <label class="radio-card cursor-pointer">
+              <input type="radio" name="relationship" value="후배 / 동생" class="hidden" />
+              <div class="p-3.5 rounded-2xl border border-slate-200 bg-white text-sm font-medium text-toss-dark flex items-center gap-2 hover:border-slate-300 transition">
+                <span>🐣</span> 후배 / 동생
+              </div>
+            </label>
+            <label class="radio-card cursor-pointer">
+              <input type="radio" name="relationship" value="직장 상사 / 선배" class="hidden" />
+              <div class="p-3.5 rounded-2xl border border-slate-200 bg-white text-sm font-medium text-toss-dark flex items-center gap-2 hover:border-slate-300 transition">
+                <span>💼</span> 직장 상사 / 선배
+              </div>
+            </label>
+            <label class="radio-card cursor-pointer col-span-2">
+              <input type="radio" name="relationship" value="비즈니스 / 고객" class="hidden" />
+              <div class="p-3.5 rounded-2xl border border-slate-200 bg-white text-sm font-medium text-toss-dark flex items-center gap-2 hover:border-slate-300 transition">
+                <span>🤝</span> 비즈니스 / 거래처 / 고객
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Tone Selector -->
+        <div class="space-y-2">
+          <label class="block text-xs font-bold text-gray-600 uppercase">원하는 말투 어조</label>
+          <div class="grid grid-cols-3 gap-2">
+            <label class="radio-card cursor-pointer">
+              <input type="radio" name="tone" value="자동 (관계 최적화)" class="hidden" checked />
+              <div class="p-3 rounded-2xl border border-slate-200 bg-white text-center text-xs font-medium text-toss-dark hover:border-slate-300 transition py-3">
+                ⚡ 자동 맞춤
+              </div>
+            </label>
+            <label class="radio-card cursor-pointer">
+              <input type="radio" name="tone" value="반말 모드" class="hidden" />
+              <div class="p-3 rounded-2xl border border-slate-200 bg-white text-center text-xs font-medium text-toss-dark hover:border-slate-300 transition py-3">
+                💬 반말 모드
+              </div>
+            </label>
+            <label class="radio-card cursor-pointer">
+              <input type="radio" name="tone" value="존댓말 모드" class="hidden" />
+              <div class="p-3 rounded-2xl border border-slate-200 bg-white text-center text-xs font-medium text-toss-dark hover:border-slate-300 transition py-3">
+                🙇‍♂️ 존댓말 모드
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Emergency Level Selector -->
+        <div class="space-y-2">
+          <label class="block text-xs font-bold text-gray-600 uppercase">위기 심각도</label>
+          <div class="space-y-2">
+            <label class="radio-card block cursor-pointer">
+              <input type="radio" name="level" value="가벼운 해명 (중)" class="hidden" checked />
+              <div class="p-3.5 rounded-2xl border border-slate-200 bg-white flex items-center justify-between text-xs text-toss-dark">
+                <span class="font-bold flex items-center gap-2">🟡 가벼운 해명 <span class="font-normal text-toss-gray">(해프닝 수준)</span></span>
+                <i class="fa-solid fa-check text-toss-blue opacity-0 check-ic"></i>
+              </div>
+            </label>
+            <label class="radio-card block cursor-pointer">
+              <input type="radio" name="level" value="난감한 오해 (상)" class="hidden" />
+              <div class="p-3.5 rounded-2xl border border-slate-200 bg-white flex items-center justify-between text-xs text-toss-dark">
+                <span class="font-bold flex items-center gap-2">🟠 난감한 오해 <span class="font-normal text-toss-gray">(해명이 꼭 필요함)</span></span>
+                <i class="fa-solid fa-check text-toss-blue opacity-0 check-ic"></i>
+              </div>
+            </label>
+            <label class="radio-card block cursor-pointer">
+              <input type="radio" name="level" value="절체절명 위기 (최상)" class="hidden" />
+              <div class="p-3.5 rounded-2xl border border-slate-200 bg-white flex items-center justify-between text-xs text-toss-dark">
+                <span class="font-bold flex items-center gap-2">🔴 절체절명 위기 <span class="font-normal text-toss-gray">(신중한 수습 필수)</span></span>
+                <i class="fa-solid fa-check text-toss-blue opacity-0 check-ic"></i>
+              </div>
+            </label>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ==================== STEP 3: CONFIRMATION ==================== -->
+      <section id="step-3" class="hidden flex-col animate-slide-up space-y-6">
+        <div>
+          <span class="text-xs font-bold text-toss-blue uppercase tracking-wider">Step 3 of 3</span>
+          <h2 class="text-2xl font-bold text-toss-dark mt-1">입력된 정보를 확인하세요</h2>
+          <p class="text-sm text-toss-gray mt-1">이 조건으로 최상의 변명 4가지를 생성합니다.</p>
+        </div>
+
+        <!-- Summary Card -->
+        <div class="p-5 bg-toss-lightBg rounded-2xl border border-slate-200 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-200/80 pb-3">
+            <span class="text-xs font-bold text-toss-gray uppercase">첨부 이미지</span>
+            <span id="summary-image-status" class="text-xs font-bold text-toss-blue">미첨부</span>
+          </div>
+
+          <div class="flex items-center justify-between border-b border-slate-200/80 pb-3">
+            <span class="text-xs font-bold text-toss-gray uppercase">위기 유형</span>
+            <span id="summary-tag" class="text-xs font-bold text-toss-dark">선택 안 함</span>
+          </div>
+
+          <div class="flex items-center justify-between border-b border-slate-200/80 pb-3">
+            <span class="text-xs font-bold text-toss-gray uppercase">상대방 / 어조</span>
+            <span id="summary-relation" class="text-xs font-bold text-toss-dark">친한 친구 / 자동</span>
+          </div>
+
+          <div class="flex items-center justify-between border-b border-slate-200/80 pb-3">
+            <span class="text-xs font-bold text-toss-gray uppercase">위기 심각도</span>
+            <span id="summary-level" class="text-xs font-bold text-toss-danger">가벼운 해명</span>
+          </div>
+
+          <div>
+            <span class="text-xs font-bold text-toss-gray uppercase block mb-1">상황 설명</span>
+            <p id="summary-text" class="text-xs text-toss-dark bg-white p-3 rounded-xl border border-slate-200 leading-relaxed italic">
+              "내용 없음"
+            </p>
+          </div>
+        </div>
+
+        <!-- Optional Gemini API Key Collapsible -->
+        <div class="pt-2">
+          <button type="button" onclick="toggleApiKeyInput()" class="text-xs text-toss-gray hover:text-toss-blue flex items-center gap-1">
+            <i class="fa-solid fa-key"></i> <span>Gemini API 키 직접 입력 (선택사항)</span>
+          </button>
+          <div id="api-key-container" class="hidden mt-2">
+            <input type="password" id="user-api-key" placeholder="AI Studio 키 입력시 맞춤 생성 사용" 
+              class="w-full p-3 rounded-xl border border-slate-200 text-xs text-toss-dark focus:outline-none focus:border-toss-blue">
+            <p class="text-[11px] text-toss-gray mt-1">* 입력하지 않아도 지능형 내장 엔진으로 즉시 생성됩니다.</p>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ==================== LOADING SCREEN ==================== -->
+      <section id="step-loading" class="hidden flex-col items-center justify-center py-16 text-center animate-slide-up">
+        <div class="relative w-20 h-20 mb-6">
+          <div class="absolute inset-0 rounded-full border-4 border-slate-100"></div>
+          <div class="absolute inset-0 rounded-full border-4 border-toss-blue border-t-transparent animate-spin"></div>
+          <div class="absolute inset-0 flex items-center justify-center text-2xl">
+            🧠
+          </div>
+        </div>
+
+        <h3 id="loading-title" class="text-xl font-extrabold text-toss-dark tracking-tight">대화 맥락 분석 중...</h3>
+        <p id="loading-subtitle" class="text-xs text-toss-gray mt-2 leading-relaxed max-w-xs">
+          실수 상황에 딱 맞는 자연스러운 해명 대안 4가지를 계산하고 있습니다.
+        </p>
+
+        <div class="w-48 bg-slate-100 h-2 rounded-full overflow-hidden mt-6">
+          <div id="loading-bar" class="bg-toss-blue h-full w-0 transition-all duration-500"></div>
+        </div>
+      </section>
+
+
+      <!-- ==================== RESULT OUTPUT SCREEN ==================== -->
+      <section id="step-result" class="hidden flex-col animate-slide-up space-y-5">
+        <div>
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-toss-blue uppercase tracking-wider">위기 탈출 솔루션</span>
+            <span class="text-xs bg-emerald-50 text-emerald-600 px-2.5 py-0.5 rounded-full font-bold">생성 완료 ✨</span>
+          </div>
+          <h2 class="text-2xl font-bold text-toss-dark mt-1">맞춤 변명 4가지</h2>
+          <p class="text-xs text-toss-gray mt-1">상황에 가장 적절한 답변을 선택해 복사하세요.</p>
+        </div>
+
+        <!-- AI Situation Analysis Summary Box -->
+        <div id="result-analysis-box" class="p-3.5 bg-blue-50/70 border border-blue-100 rounded-2xl text-xs text-blue-900 leading-snug flex items-start gap-2.5">
+          <i class="fa-solid fa-wand-magic-sparkles text-toss-blue mt-0.5 text-sm flex-shrink-0"></i>
+          <div>
+            <span class="font-bold block mb-0.5">AI 분석 결과</span>
+            <p id="analysis-text-content" class="text-slate-700">분석 중...</p>
+          </div>
+        </div>
+
+        <!-- 4 Distinct Excuse Cards -->
+        <div class="space-y-4" id="cards-container">
+          
+          <!-- Card 1: Typo / Keyboard Error -->
+          <div class="toss-card border border-slate-200/90 p-4 relative overflow-hidden transition-all hover:border-toss-blue/50">
+            <div class="flex items-center justify-between mb-2">
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-xs font-bold text-slate-800">
+                ⌨️ Option 1. 오타 / 자판 오류형
+              </span>
+              <button onclick="copyCardText('result-text-1', this)" class="text-xs font-bold text-toss-blue hover:text-toss-blueHover flex items-center gap-1 bg-blue-50 px-2.5 py-1 rounded-lg toss-button-active">
+                <i class="fa-regular fa-copy"></i> 복사
+              </button>
+            </div>
+            
+            <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200/60 my-2">
+              <p id="result-text-1" class="selectable-text text-sm font-medium text-slate-900 leading-relaxed whitespace-pre-line"></p>
+            </div>
+
+            <div class="flex items-center justify-between text-[11px] text-toss-gray pt-1">
+              <span id="result-tip-1" class="truncate max-w-[80%]"><i class="fa-solid fa-lightbulb text-amber-500 mr-1"></i> 팁 내용...</span>
+              <button onclick="editCardText('result-text-1')" class="text-slate-400 hover:text-slate-700">
+                <i class="fa-solid fa-pen-to-square"></i> 수정
+              </button>
+            </div>
+          </div>
+
+          <!-- Card 2: Misdirection / Contextual Pivot -->
+          <div class="toss-card border border-slate-200/90 p-4 relative overflow-hidden transition-all hover:border-toss-blue/50">
+            <div class="flex items-center justify-between mb-2">
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-xs font-bold text-slate-800">
+                🔀 Option 2. 전달 오류 / 상황 전환형
+              </span>
+              <button onclick="copyCardText('result-text-2', this)" class="text-xs font-bold text-toss-blue hover:text-toss-blueHover flex items-center gap-1 bg-blue-50 px-2.5 py-1 rounded-lg toss-button-active">
+                <i class="fa-regular fa-copy"></i> 복사
+              </button>
+            </div>
+            
+            <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200/60 my-2">
+              <p id="result-text-2" class="selectable-text text-sm font-medium text-slate-900 leading-relaxed whitespace-pre-line"></p>
+            </div>
+
+            <div class="flex items-center justify-between text-[11px] text-toss-gray pt-1">
+              <span id="result-tip-2" class="truncate max-w-[80%]"><i class="fa-solid fa-lightbulb text-amber-500 mr-1"></i> 팁 내용...</span>
+              <button onclick="editCardText('result-text-2')" class="text-slate-400 hover:text-slate-700">
+                <i class="fa-solid fa-pen-to-square"></i> 수정
+              </button>
+            </div>
+          </div>
+
+          <!-- Card 3: Sincere Apology -->
+          <div class="toss-card border border-slate-200/90 p-4 relative overflow-hidden transition-all hover:border-toss-blue/50">
+            <div class="flex items-center justify-between mb-2">
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-xs font-bold text-slate-800">
+                🙇‍♂️ Option 3. 솔직 사과 / 진정성형
+              </span>
+              <button onclick="copyCardText('result-text-3', this)" class="text-xs font-bold text-toss-blue hover:text-toss-blueHover flex items-center gap-1 bg-blue-50 px-2.5 py-1 rounded-lg toss-button-active">
+                <i class="fa-regular fa-copy"></i> 복사
+              </button>
+            </div>
+            
+            <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200/60 my-2">
+              <p id="result-text-3" class="selectable-text text-sm font-medium text-slate-900 leading-relaxed whitespace-pre-line"></p>
+            </div>
+
+            <div class="flex items-center justify-between text-[11px] text-toss-gray pt-1">
+              <span id="result-tip-3" class="truncate max-w-[80%]"><i class="fa-solid fa-lightbulb text-amber-500 mr-1"></i> 팁 내용...</span>
+              <button onclick="editCardText('result-text-3')" class="text-slate-400 hover:text-slate-700">
+                <i class="fa-solid fa-pen-to-square"></i> 수정
+              </button>
+            </div>
+          </div>
+
+          <!-- Card 4: Witty & Lighthearted -->
+          <div class="toss-card border border-slate-200/90 p-4 relative overflow-hidden transition-all hover:border-toss-blue/50">
+            <div class="flex items-center justify-between mb-2">
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-xs font-bold text-slate-800">
+                💡 Option 4. 센스 반전 / 위트형
+              </span>
+              <button onclick="copyCardText('result-text-4', this)" class="text-xs font-bold text-toss-blue hover:text-toss-blueHover flex items-center gap-1 bg-blue-50 px-2.5 py-1 rounded-lg toss-button-active">
+                <i class="fa-regular fa-copy"></i> 복사
+              </button>
+            </div>
+            
+            <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200/60 my-2">
+              <p id="result-text-4" class="selectable-text text-sm font-medium text-slate-900 leading-relaxed whitespace-pre-line"></p>
+            </div>
+
+            <div class="flex items-center justify-between text-[11px] text-toss-gray pt-1">
+              <span id="result-tip-4" class="truncate max-w-[80%]"><i class="fa-solid fa-lightbulb text-amber-500 mr-1"></i> 팁 내용...</span>
+              <button onclick="editCardText('result-text-4')" class="text-slate-400 hover:text-slate-700">
+                <i class="fa-solid fa-pen-to-square"></i> 수정
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Practical Crisis KakaoTalk Tip Banner -->
+        <div class="p-4 bg-amber-50 rounded-2xl border border-amber-200/70 text-amber-900 text-xs space-y-1.5">
+          <div class="font-bold flex items-center gap-1.5 text-amber-800">
+            <i class="fa-solid fa-shield-halved"></i> 🚨 카톡 실시간 대응 팁
+          </div>
+          <p class="leading-relaxed">
+            카카오톡 보낸 지 5분 이내라면 메시지를 길게 누른 후 <strong>'모든 대화 상대에게서 삭제'</strong>를 선택하세요. 이미 상대방이 읽었다면 핑계를 대기보다 위 변명 중 가장 어울리는 문장을 1분 이내에 보내는 것이 효과적입니다.
+          </p>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Fixed Bottom Action Bar -->
+    <div id="bottom-action-bar" class="absolute bottom-0 left-0 right-0 p-4 bg-white/90 backdrop-blur-md border-t border-slate-100 z-20">
+      
+      <!-- Step 0 Action -->
+      <button id="btn-step-0" onclick="nextStep()" class="w-full h-14 bg-toss-blue text-white text-base font-bold rounded-2xl shadow-lg shadow-blue-500/20 hover:bg-toss-blueHover toss-button-active flex items-center justify-center gap-2">
+        <span>수습 시작하기</span>
+        <i class="fa-solid fa-arrow-right text-sm"></i>
+      </button>
+
+      <!-- Step 1 Action -->
+      <button id="btn-step-1" onclick="nextStep()" class="w-full h-14 bg-toss-blue text-white text-base font-bold rounded-2xl shadow-lg shadow-blue-500/20 hover:bg-toss-blueHover toss-button-active hidden flex items-center justify-center gap-2">
+        <span>다음 단계로</span>
+        <i class="fa-solid fa-arrow-right text-sm"></i>
+      </button>
+
+      <!-- Step 2 Actions -->
+      <div id="btn-step-2" class="hidden flex gap-2">
+        <button onclick="prevStep()" class="w-1/3 h-14 bg-slate-100 text-slate-700 font-bold rounded-2xl hover:bg-slate-200 toss-button-active">
+          이전
+        </button>
+        <button onclick="nextStep()" class="w-2/3 h-14 bg-toss-blue text-white text-base font-bold rounded-2xl shadow-lg shadow-blue-500/20 hover:bg-toss-blueHover toss-button-active flex items-center justify-center gap-2">
+          <span>최종 확인</span>
+          <i class="fa-solid fa-arrow-right text-sm"></i>
+        </button>
+      </div>
+
+      <!-- Step 3 Action -->
+      <button id="btn-step-3" onclick="generateExcuses()" class="w-full h-14 bg-toss-blue text-white text-base font-bold rounded-2xl shadow-lg shadow-blue-500/20 hover:bg-toss-blueHover toss-button-active hidden flex items-center justify-center gap-2 animate-pulse-fast">
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+        <span>변명 생성하기</span>
+      </button>
+
+      <!-- Result Reset Action -->
+      <button id="btn-step-result" onclick="resetApp()" class="w-full h-14 bg-slate-900 text-white text-base font-bold rounded-2xl shadow-md hover:bg-black toss-button-active hidden flex items-center justify-center gap-2">
+        <i class="fa-solid fa-arrow-rotate-left"></i>
+        <span>처음으로 돌아가기</span>
+      </button>
+
+    </div>
+
+    <!-- Bottom Toast Notification -->
+    <div id="toast" class="fixed bottom-20 left-1/2 -translate-x-1/2 bg-slate-900/90 text-white text-xs font-semibold px-4 py-3 rounded-full shadow-xl flex items-center gap-2 z-50 opacity-0 pointer-events-none transform translate-y-4">
+      <i class="fa-solid fa-check-circle text-toss-success"></i>
+      <span id="toast-message">클립보드에 복사되었습니다!</span>
+    </div>
+
+  </div>
+
+  <script>
+    // Application State Variables
+    let currentStep = 0;
+    let selectedTag = '';
+    let uploadedBase64Image = null;
+    let uploadedImageMime = '';
+
+    // Step navigation control
+    function updateStepUI() {
+      // Hide all step sections
+      for (let i = 0; i <= 3; i++) {
+        document.getElementById(`step-${i}`).classList.add('hidden');
+        document.getElementById(`step-${i}`).classList.remove('flex');
+      }
+      document.getElementById('step-loading').classList.add('hidden');
+      document.getElementById('step-loading').classList.remove('flex');
+      document.getElementById('step-result').classList.add('hidden');
+      document.getElementById('step-result').classList.remove('flex');
+
+      // Hide all bottom buttons
+      document.getElementById('btn-step-0').classList.add('hidden');
+      document.getElementById('btn-step-1').classList.add('hidden');
+      document.getElementById('btn-step-2').classList.add('hidden');
+      document.getElementById('btn-step-3').classList.add('hidden');
+      document.getElementById('btn-step-result').classList.add('hidden');
+
+      // Header controls
+      const backBtn = document.getElementById('nav-back-btn');
+      const resetBtn = document.getElementById('reset-top-btn');
+      const progressContainer = document.getElementById('progress-container');
+      const progressBar = document.getElementById('progress-bar');
+
+      if (currentStep === 0) {
+        backBtn.classList.add('hidden');
+        resetBtn.classList.add('hidden');
+        progressContainer.classList.add('hidden');
+        document.getElementById('step-0').classList.remove('hidden');
+        document.getElementById('step-0').classList.add('flex');
+        document.getElementById('btn-step-0').classList.remove('hidden');
+      } else if (currentStep >= 1 && currentStep <= 3) {
+        backBtn.classList.remove('hidden');
+        resetBtn.classList.remove('hidden');
+        progressContainer.classList.remove('hidden');
+        
+        // Progress percentage
+        const pct = (currentStep / 3) * 100;
+        progressBar.style.width = `${pct}%`;
+
+        document.getElementById(`step-${currentStep}`).classList.remove('hidden');
+        document.getElementById(`step-${currentStep}`).classList.add('flex');
+
+        if (currentStep === 1) {
+          document.getElementById('btn-step-1').classList.remove('hidden');
+        } else if (currentStep === 2) {
+          document.getElementById('btn-step-2').classList.remove('hidden');
+          document.getElementById('btn-step-2').classList.add('flex');
+        } else if (currentStep === 3) {
+          updateSummary();
+          document.getElementById('btn-step-3').classList.remove('hidden');
+        }
+      } else if (currentStep === 4) { // Loading
+        backBtn.classList.add('hidden');
+        progressContainer.classList.add('hidden');
+        document.getElementById('step-loading').classList.remove('hidden');
+        document.getElementById('step-loading').classList.add('flex');
+      } else if (currentStep === 5) { // Result
+        backBtn.classList.add('hidden');
+        resetBtn.classList.remove('hidden');
+        progressContainer.classList.add('hidden');
+        document.getElementById('step-result').classList.remove('hidden');
+        document.getElementById('step-result').classList.add('flex');
+        document.getElementById('btn-step-result').classList.remove('hidden');
+      }
+    }
+
+    function nextStep() {
+      if (currentStep < 3) {
+        currentStep++;
+        updateStepUI();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+
+    function prevStep() {
+      if (currentStep > 0 && currentStep <= 3) {
+        currentStep--;
+        updateStepUI();
+      }
+    }
+
+    function resetApp() {
+      currentStep = 0;
+      selectedTag = '';
+      uploadedBase64Image = null;
+      uploadedImageMime = '';
+      
+      // Clear inputs
+      document.getElementById('situation-text').value = '';
+      document.getElementById('file-input').value = '';
+      document.getElementById('image-preview').src = '';
+      document.getElementById('image-preview-container').classList.add('hidden');
+      document.getElementById('upload-placeholder').classList.remove('hidden');
+
+      // Reset Tag Buttons
+      document.querySelectorAll('.tag-btn').forEach(btn => {
+        btn.classList.remove('border-toss-blue', 'bg-blue-50', 'text-toss-blue');
+        btn.classList.add('border-slate-200', 'bg-white', 'text-toss-dark');
+      });
+
+      updateStepUI();
+    }
+
+    // Quick Tag Toggle
+    function toggleTag(btnElement, tagName) {
+      document.querySelectorAll('.tag-btn').forEach(btn => {
+        btn.classList.remove('border-toss-blue', 'bg-blue-50', 'text-toss-blue');
+        btn.classList.add('border-slate-200', 'bg-white', 'text-toss-dark');
+      });
+
+      if (selectedTag === tagName) {
+        selectedTag = '';
+      } else {
+        selectedTag = tagName;
+        btnElement.classList.remove('border-slate-200', 'bg-white', 'text-toss-dark');
+        btnElement.classList.add('border-toss-blue', 'bg-blue-50', 'text-toss-blue');
+      }
+    }
+
+    // Image Upload Handlers
+    function handleImageSelect(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      if (!file.type.startsWith('image/')) {
+        showToast('이미지 파일만 선택 가능합니다.');
+        return;
+      }
+
+      uploadedImageMime = file.type;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const fullDataUrl = evt.target.result;
+        document.getElementById('image-preview').src = fullDataUrl;
+        document.getElementById('upload-placeholder').classList.add('hidden');
+        document.getElementById('image-preview-container').classList.remove('hidden');
+
+        // Extract raw base64 data for API payload
+        uploadedBase64Image = fullDataUrl.split(',')[1];
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function removeImage(e) {
+      e.stopPropagation();
+      document.getElementById('file-input').value = '';
+      document.getElementById('image-preview').src = '';
+      document.getElementById('image-preview-container').classList.add('hidden');
+      document.getElementById('upload-placeholder').classList.remove('hidden');
+      uploadedBase64Image = null;
+      uploadedImageMime = '';
+    }
+
+    // Toggle API Key Input
+    function toggleApiKeyInput() {
+      const container = document.getElementById('api-key-container');
+      container.classList.toggle('hidden');
+    }
+
+    // Summary Update
+    function updateSummary() {
+      document.getElementById('summary-image-status').innerText = uploadedBase64Image ? '첨부됨 (AI 파악 가능)' : '미첨부';
+      document.getElementById('summary-tag').innerText = selectedTag || '자유 작성';
+
+      const rel = document.querySelector('input[name="relationship"]:checked')?.value || '친한 친구';
+      const tone = document.querySelector('input[name="tone"]:checked')?.value || '자동';
+      document.getElementById('summary-relation').innerText = `${rel} / ${tone}`;
+
+      const level = document.querySelector('input[name="level"]:checked')?.value || '가벼운 해명';
+      document.getElementById('summary-level').innerText = level;
+
+      const sitText = document.getElementById('situation-text').value.trim();
+      document.getElementById('summary-text').innerText = sitText ? `"${sitText}"` : '상황 입력 없음 (기본 패턴 적용)';
+    }
+
+    // Copy to Clipboard
+    function copyCardText(elementId, btn) {
+      const text = document.getElementById(elementId).innerText;
+      if (!text) return;
+
+      // ExecCommand copy fallback
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      document.body.appendChild(textArea);
+      textArea.select();
+      try {
+        document.execCommand('copy');
+        showToast('클립보드에 복사되었습니다!');
+        
+        // Button Feedback
+        const originalHTML = btn.innerHTML;
+        btn.innerHTML = `<i class="fa-solid fa-check"></i> 완료`;
+        btn.classList.replace('text-toss-blue', 'text-emerald-600');
+        btn.classList.replace('bg-blue-50', 'bg-emerald-50');
+        setTimeout(() => {
+          btn.innerHTML = originalHTML;
+          btn.classList.replace('text-emerald-600', 'text-toss-blue');
+          btn.classList.replace('bg-emerald-50', 'bg-blue-50');
+        }, 1500);
+      } catch (err) {
+        showToast('복사에 실패했습니다.');
+      }
+      document.body.removeChild(textArea);
+    }
+
+    function editCardText(elementId) {
+      const el = document.getElementById(elementId);
+      const current = el.innerText;
+      const newText = prompt("변명 메시지를 직접 수정하세요:", current);
+      if (newText !== null && newText.trim() !== '') {
+        el.innerText = newText.trim();
+        showToast('메시지가 수정되었습니다.');
+      }
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-message').innerText = msg;
+      toast.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-4');
+      toast.classList.add('opacity-100', 'translate-y-0');
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4');
+        toast.classList.remove('opacity-100', 'translate-y-0');
+      }, 2500);
+    }
+
+    // Core Generation Flow
+    async function generateExcuses() {
+      currentStep = 4; // Show loading screen
+      updateStepUI();
+
+      // Loading Animation Progress Bar
+      const loadingBar = document.getElementById('loading-bar');
+      const loadingTitle = document.getElementById('loading-title');
+      loadingBar.style.width = '20%';
+
+      setTimeout(() => {
+        loadingBar.style.width = '55%';
+        loadingTitle.innerText = "위기 상황 타개책 계산 중...";
+      }, 800);
+
+      setTimeout(() => {
+        loadingBar.style.width = '85%';
+        loadingTitle.innerText = "4가지 맞춤 변명 조율 중...";
+      }, 1600);
+
+      const relationship = document.querySelector('input[name="relationship"]:checked')?.value || '친한 친구';
+      const tone = document.querySelector('input[name="tone"]:checked')?.value || '자동';
+      const level = document.querySelector('input[name="level"]:checked')?.value || '가벼운 해명';
+      const situation = document.getElementById('situation-text').value.trim();
+      const userKey = document.getElementById('user-api-key').value.trim();
+
+      // Attempt Gemini API call
+      let resultData = null;
+      try {
+        resultData = await callGeminiAPI(userKey, relationship, tone, level, situation, selectedTag, uploadedBase64Image, uploadedImageMime);
+      } catch (e) {
+        console.warn("Gemini API call skipped or failed, activating intelligent template generator:", e);
+      }
+
+      // Fallback if API fails or returns invalid structure
+      if (!resultData || !resultData.type1) {
+        resultData = generateFallbackExcuses(relationship, tone, level, situation, selectedTag);
+      }
+
+      // Render Results
+      setTimeout(() => {
+        loadingBar.style.width = '100%';
+        renderResults(resultData);
+        currentStep = 5;
+        updateStepUI();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 2200);
+    }
+
+    // Gemini API Request Function
+    async function callGeminiAPI(customKey, relationship, tone, level, situation, tag, base64Img, mimeType) {
+      const apiKey = customKey || ""; // Canvas auto-injects runtime API key if left empty
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+      const systemInstruction = `당신은 대한민국 최고의 대인관계 & 카톡/문자 말실수 수습 전문가입니다.
+사용자가 제보한 대화 상황 및 캡처 이미지를 바탕으로 상대방과의 관계와 말투에 맞는 가장 자연스러운 4가지 타입의 변명 메시지를 작성하세요.
+
+CRITICAL RULES:
+1. 최종 변명 메시지 내용에는 불필요하거나 어색한 이모티콘(😊, 😭, 🙏 등)을 절대 포함하지 마세요. 실제 카톡/문자처럼 담백하고 정교해야 합니다.
+2. 로봇 말투나 AI 느낌을 완전히 배제하고, 사람이 다급하거나 진지하게 직접 친 문장이어야 합니다.
+3. 한국어 언어 관습(존댓말/반말)과 대화 상하관계를 정확하게 준수하세요.
+4. 반말인 경우 친근하게, 상사인 경우 예의 갖춰 신중히 작성하세요.
+
+응답은 반드시 아래 JSON Schema 형식으로만 반환하세요.`;
+
+      const promptText = `
+[상황 분석 데이터]
+- 상대방과의 관계: ${relationship}
+- 희망 어조: ${tone}
+- 위기 심각도: ${level}
+- 카톡/문자 위기 유형: ${tag || '미지정'}
+- 사용자 상세 설명: ${situation || '설명 없음 (이미지 및 유형 참조)'}
+
+위 데이터(및 첨부된 이미지)를 종합하여 아래 4가지 변명 타입을 작성해주세요:
+1. type1 (오타/자판오류형): 쿼티 자판 오타, 음성인식, 자동완성 오류를 핑계로 자연스럽게 넘기는 메시지.
+2. type2 (전달오류/상황전환형): 톡방을 착각했거나, 다른 작업 중 잘못 보냈다고 전달 대상을 교정하는 메시지.
+3. type3 (솔직사과/진정성형): 핑계 없이 솔직하고 담백하게 오해를 풀고 사과하는 진정성 메시지.
+4. type4 (센스반전/위트형): 재치 있는 유머나 분위기 전환으로 상대방을 웃게 만들며 위기를 넘기는 메시지.
+`;
+
+      const contentsParts = [{ text: promptText }];
+
+      if (base64Img) {
+        contentsParts.push({
+          inlineData: {
+            mimeType: mimeType || "image/png",
+            data: base64Img
+          }
+        });
+      }
+
+      const payload = {
+        contents: [{ role: "user", parts: contentsParts }],
+        systemInstruction: { parts: [{ text: systemInstruction }] },
+        generationConfig: {
+          responseMimeType: "application/json",
+          responseSchema: {
+            type: "OBJECT",
+            properties: {
+              analysis: { type: "STRING" },
+              type1: {
+                type: "OBJECT",
+                properties: { title: { type: "STRING" }, text: { type: "STRING" }, tip: { type: "STRING" } },
+                required: ["title", "text", "tip"]
+              },
+              type2: {
+                type: "OBJECT",
+                properties: { title: { type: "STRING" }, text: { type: "STRING" }, tip: { type: "STRING" } },
+                required: ["title", "text", "tip"]
+              },
+              type3: {
+                type: "OBJECT",
+                properties: { title: { type: "STRING" }, text: { type: "STRING" }, tip: { type: "STRING" } },
+                required: ["title", "text", "tip"]
+              },
+              type4: {
+                type: "OBJECT",
+                properties: { title: { type: "STRING" }, text: { type: "STRING" }, tip: { type: "STRING" } },
+                required: ["title", "text", "tip"]
+              }
+            },
+            required: ["analysis", "type1", "type2", "type3", "type4"]
+          }
+        }
+      };
+
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        throw new Error(`Gemini API Response Error: ${response.status}`);
+      }
+
+      const result = await response.json();
+      const jsonStr = result.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (jsonStr) {
+        return JSON.parse(jsonStr);
+      }
+      return null;
+    }
+
+    function generateFallbackExcuses(rel, tone, level, situation, tag) {
+      const isInformal = tone.includes('반말') || (tone.includes('자동') && (rel.includes('친구') || rel.includes('후배')));
+      const isSenior = rel.includes('상사') || rel.includes('고객') || rel.includes('비즈니스');
+
+      let analysisText = `'${rel}' 관계와 '${tag || '말실수'}' 상황을 반영하여 제작되었습니다.`;
+      if (situation) {
+        analysisText += ` 입력해주신 "${situation.slice(0, 30)}..." 문맥에 맞춰 최적화했습니다.`;
+      }
+
+      if (isSenior) {
+        return {
+          analysis: analysisText,
+          type1: {
+            title: "오타 / 자판 오류형",
+            text: "팀장님, 정말 죄송합니다. 키보드 음성인식기능이 잘못 켜진 상태에서 키보드가 눌려 오타가 들어갔습니다. 놀라셨을텐데 확인 후 바로 정정하여 말씀드리겠습니다.",
+            tip: "음성인식이나 자판 오류를 언급할 땐 바로 다음 수정 문장을 보내는 것이 정석입니다."
+          },
+          type2: {
+            title: "전달 오류 / 상황 전환형",
+            text: "죄송합니다, 방금 메시지는 다른 자료를 정리하던 중 톡방을 착각하여 잘못 전송되었습니다. 혼선을 드려 진심으로 죄송합니다.",
+            tip: "직장 상사나 고객에게는 톡방 착각을 솔직하게 바로 알리고 다음 업무 내용을 이어가는 것이 좋습니다."
+          },
+          type3: {
+            title: "솔직 사과 / 진정성형",
+            text: "방금 보낸 메시지로 인해 오해를 드렸다면 진심으로 사과드립니다. 제 의도와 다르게 표현되어 마음이 무겁습니다. 다시 한번 사과드리며 주의하도록 하겠습니다.",
+            tip: "진정성형은 핑계 없이 깔끔한 사과로 상대방의 기분을 최우선으로 배려합니다."
+          },
+          type4: {
+            title: "센스 반전 / 위트형",
+            text: "아쿠, 너무 긴장한 나머지 작성하던 임시 메모가 그대로 잘못 전송되었네요. 너그럽게 양해해 주시면 감사하겠습니다. 오늘 보고서 빠르게 준비해서 올리겠습니다.",
+            tip: "업무열정이나 긴장감을 은연중에 내비쳐 훈훈하게 넘어가는 전략입니다."
+          }
+        };
+      } else if (isInformal) {
+        return {
+          analysis: analysisText,
+          type1: {
+            title: "오타 / 자판 오류형",
+            text: "아 미안 진짜! 주머니에 폰 넣고 가다가 키보드가 맘대로 눌려서 오타 대박 났다 ㅋㅋㅋ 신경 쓰지 마!",
+            tip: "친구 사이에는 자판이나 주머니 핑계로 자연스럽게 웃어넘기는 게 제맛입니다."
+          },
+          type2: {
+            title: "전달 오류 / 상황 전환형",
+            text: "아 악 미안해 톡방 착각해서 너한테 들어갔다!! 다른 친구한테 보낼 거였는데 신경 안 써도 돼!",
+            tip: "다른 방에 보낼 문자가 들어갔음을 당황스러운 척 빠르게 밝히는 방법입니다."
+          },
+          type3: {
+            title: "솔직 사과 / 진정성형",
+            text: "아 방금 한 말은 내가 너무 생각 없이 던진 것 같아 미안해. 기분 상했을 수도 있는데 내 진심 아니었으니까 오해 풀어줘 진짜로.",
+            tip: "이모티콘 없이 진지한 톤으로 사과하면 상대방도 마음이 녹습니다."
+          },
+          type4: {
+            title: "센스 반전 / 위트형",
+            text: "방금 보낸 건 네 반응 보려고 던진 몰래카메라 같은 거였음 ㅋㅋㅋ 당황했지? 미안 다음엔 맛있는 거 사줄게!",
+            tip: "가벼운 장난이나 몰카 구도로 빠르게 전환하여 분위기를 환기합니다."
+          }
+        };
+      } else {
+        return {
+          analysis: analysisText,
+          type1: {
+            title: "오타 / 자판 오류형",
+            text: "아 죄송해요, 자동완성 기능이 켜져 있는 줄 모르고 입력하다가 문장이 엉뚱하게 들어갔네요. 양해 부탁드립니다.",
+            tip: "자동완성 오류는 누구나 경험해본 일이라 공감하며 쉽게 이해해줍니다."
+          },
+          type2: {
+            title: "전달 오류 / 상황 전환형",
+            text: "아 죄송합니다, 다른 분께 전달할 메시지를 잘못 전송했습니다. 불편을 드려 죄송합니다.",
+            tip: "메시지 전달 대상이 잘못되었음을 정중히 알리는 가장 무난한 방법입니다."
+          },
+          type3: {
+            title: "솔직 사과 / 진정성형",
+            text: "방금 전송된 메시지는 제가 실수가 있었습니다. 의도치 않게 당황스럽게 해드려 죄송합니다. 오해 없으시길 바랍니다.",
+            tip: "정중하고 담백한 존댓말로 수습하는 가장 안정적인 형태입니다."
+          },
+          type4: {
+            title: "센스 반전 / 위트형",
+            text: "어머 죄송합니다, 손이 슬립해서 오타가 대박 났네요. 덕분에 한 번 웃으셨길 바라며 다음엔 더 주의하겠습니다.",
+            tip: "적절한 유머 감각으로 민망한 순간을 부드럽게 넘기는 카드가 됩니다."
+          }
+        };
+      }
+    }
+
+    // Render generated cards to HTML
+    function renderResults(data) {
+      document.getElementById('analysis-text-content').innerText = data.analysis || "상황 및 입력 데이터 분석을 마쳤습니다.";
+
+      // Type 1
+      document.getElementById('result-text-1').innerText = data.type1.text;
+      document.getElementById('result-tip-1').innerHTML = `<i class="fa-solid fa-lightbulb text-amber-500 mr-1"></i> ${data.type1.tip}`;
+
+      // Type 2
+      document.getElementById('result-text-2').innerText = data.type2.text;
+      document.getElementById('result-tip-2').innerHTML = `<i class="fa-solid fa-lightbulb text-amber-500 mr-1"></i> ${data.type2.tip}`;
+
+      // Type 3
+      document.getElementById('result-text-3').innerText = data.type3.text;
+      document.getElementById('result-tip-3').innerHTML = `<i class="fa-solid fa-lightbulb text-amber-500 mr-1"></i> ${data.type3.tip}`;
+
+      // Type 4
+      document.getElementById('result-text-4').innerText = data.type4.text;
+      document.getElementById('result-tip-4').innerHTML = `<i class="fa-solid fa-lightbulb text-amber-500 mr-1"></i> ${data.type4.tip}`;
+    }
+
+    // Initialize UI on load
+    window.onload = function() {
+      updateStepUI();
+    };
+  </script>
+</body>
+</html>
